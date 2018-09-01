@@ -14,9 +14,7 @@ public abstract class GraphicsObject {
     }
 
     public Image findImage() {
-        String s = System.getProperty("user.dir");
-        s = s + "\\Icons\\" + x;
-        return new Image(s);
+        return new Image(this.getClass().getResourceAsStream("\\Icons\\"+getName()));
     }
 
 

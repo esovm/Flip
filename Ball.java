@@ -20,7 +20,19 @@ public class Ball extends GraphicsObject {
 
     @Override
     public String getName() {
-        return "Ball.jpg";
+        if(thisDirection == Direction.NORTH) {
+            return "BallUp.jpg";
+        }
+        if(thisDirection == Direction.SOUTH) {
+            return "BallDown.jpg";
+        }
+        if(thisDirection == Direction.EAST) {
+            return "BallRight.jpg";
+        }
+        if(thisDirection == Direction.WEST) {
+            return "BallLeft.jpg";
+        }
+        throw new Error("Warning: This ball is not facing north or south or east or west");
     }
 
     public static Direction[] getAllowedDirections() {

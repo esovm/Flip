@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TileAndBallStorage {
-    ArrayList<ArrayList<Tile>> tiles = new ArrayList<>();
-    ArrayList<Ball> balls = new ArrayList<>();
-    public int tileSize;
+    private ArrayList<ArrayList<Tile>> tiles;
+    private ArrayList<Ball> balls;
+    private int tileSize;
     public void read(String pathName) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(pathName));
@@ -23,10 +23,11 @@ public class TileAndBallStorage {
                         al.add(Tile.create(br.read(), a, b, tileSize));
                         twoNewLines = false;
                     } else {
+                        tiles.add(al);
                         break;
                     }
                 }
-                if(twoNewLines == true) {
+                if(twoNewLines) {
                     break;
                 }
                 twoNewLines = true;
@@ -48,9 +49,13 @@ public class TileAndBallStorage {
                 Direction d = Direction.getString(sc.next());
                 br.read();
                 balls.add(new Ball(d,x,y,tileSize,number));
+                if(!sc.hasNext()) {
+                    break;
+                }
             }
         } catch(IOException e) {
             System.err.println("Warning: Could not read from file.");
+            e.printStackTrace();
         }
         removeEmpty();
     }
@@ -74,9 +79,10 @@ public class TileAndBallStorage {
             bw.close();
         } catch(IOException e) {
             System.err.println("Warning: Could not write to file.");
+            e.printStackTrace();
         }
     }
-    public void removeEmpty() {
+    private void removeEmpty() {
         for(int i = 0; i < tiles.size(); i++) {
             while(true) {
                 if(tiles.get(i).get(tiles.get(i).size()-1) instanceof Empty) {
@@ -169,6 +175,23 @@ public class TileAndBallStorage {
     public void removeRow(int whichRow) {
         for(int i = 0; i < tiles.size(); i++) {
             tiles.get(i).remove(whichRow);
+        }
+    }
+    public void deleteRect(int startX, int startY, int endX, int endY) {
+        int a = startX;
+        while(true) {
+            int b = startY;
+            while(true) {
+                tiles.get(a).remove(startY);
+                b++;
+                if(b == endY) {
+                    break;
+                }
+            }
+            a++;
+            if(a == endX) {
+                break;
+            }
         }
     }
 }

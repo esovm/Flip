@@ -33,7 +33,7 @@ public class Comment extends Tile {
 
     @Override
     public String getName() {
-        return null;
+        return "Error.jpg";
     }
 
     @Override

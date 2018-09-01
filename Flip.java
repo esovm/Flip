@@ -3,6 +3,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
@@ -14,9 +16,14 @@ public class Flip extends Application {
     private static int canvasX = 200;
     private static int canvasY = 100;
     private static int tileSize = 20;
-    private ArrayList<Tile> tiles = new ArrayList<>();
-    private ArrayList<Ball> balls = new ArrayList<>();
-
+    private TileAndBallStorage tb;
+    private GraphicsContext gc;
+    private Canvas canvas;
+    private Button run;
+    private Button load;
+    private Button saveAs;
+    private TextField howFast;
+    private SelectOverlay so;
     public static void main(String[] args) {
         try {
             width = Integer.parseInt(args[0]);
