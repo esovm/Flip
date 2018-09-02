@@ -15,9 +15,9 @@ class TileAndBallStorage {
     }
 
 
-    void read(String pathName) {
+    void read(File f) {
         try {
-            BufferedReader br = new BufferedReader(new FileReader(pathName));
+            BufferedReader br = new BufferedReader(new FileReader(f));
             tiles = new ArrayList<>();
             int a = 0;
             boolean twoNewLines = false;
@@ -27,7 +27,7 @@ class TileAndBallStorage {
                 while(true) {
                     int c = br.read();
                     if(c != '\n') {
-                        al.add(Tile.create(br.read(), a, b, tileSize));
+                        al.add(Tile.create(br.read(), tileSize));
                         twoNewLines = false;
                     } else {
                         tiles.add(al);
@@ -57,16 +57,17 @@ class TileAndBallStorage {
                 if(br.skip(1)!=1) throw new IOException("Warning: skip(long n) is not skipping n."); 
                 balls.add(new Ball(d, x, y, tileSize, number));
             } while (sc.hasNext());
+            sc.close();
         } catch(IOException e) {
             System.err.println("Warning: Could not read from file.");
             e.printStackTrace();
         }
         removeEmpty();
     }
-    void write(String pathName) {
+    void write(File f) {
         removeEmpty();
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(pathName));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             for(int a = 0; a < tiles.size(); a++) {
                 for(int b = 0; b < tiles.size(); b++) {
                     bw.write(tiles.get(a).get(b).getAscii());
@@ -109,12 +110,12 @@ class TileAndBallStorage {
                 return tiles.get(x).get(y);
             }
         }
-        return new Empty(Direction.NORTHSOUTHEASTWEST,x,y,tileSize);
+        return new Empty(Direction.NORTHSOUTHEASTWEST,tileSize);
     }
     void draw(GraphicsContext gc) {
-        for (ArrayList<Tile> tile : tiles) {
-            for (Tile aTile : tile) {
-                aTile.draw(gc);
+        for (int a = 0; a < tiles.size(); a++) {
+            for (int b = 0; b < tiles.size(); b++) {
+                tiles.get(a).get(b).draw(gc, a, b);
             }
         }
         for (Ball ball : balls) {
@@ -126,34 +127,32 @@ class TileAndBallStorage {
             ball.update(this);
         }
     }
-    void place(GraphicsObject go) {
+    void place(GraphicsObject go, int x, int y) {
         if(go instanceof Ball) {
             placeBall((Ball) go);
         }
         if(go instanceof Tile) {
-            placeTile((Tile) go);
+            placeTile((Tile) go, x, y);
         }
     }
     private void placeBall(Ball b) {
         balls.add(b);
     }
-    private void placeTile(Tile t) {
-        int x = t.x;
-        int y = t.y;
+    private void placeTile(Tile t, int x, int y) {
         if(tiles.size()>x) {
             if(tiles.get(x).size()>y) {
                 tiles.get(x).set(y,t);
             } else {
                 for(int i = 0; i < y - tiles.get(x).size() + 1; i++) {
-                    tiles.get(x).add(new Empty(Direction.NORTHSOUTHEASTWEST,x,i,tileSize));
+                    tiles.get(x).add(new Empty(Direction.NORTHSOUTHEASTWEST,tileSize));
                 }
-                placeTile(t);
+                placeTile(t,x,y);
             }
         } else {
             for(int i = 0; i < x - tiles.size() + 1; i++) {
                 tiles.add(new ArrayList<>());
             }
-            placeTile(t);
+            placeTile(t,x,y);
         }
     }
     void remove(int x, int y) {
@@ -161,13 +160,13 @@ class TileAndBallStorage {
         removeTile(x,y);
         removeEmpty();
     }
-    private void removeBall(int x, int y) {
+    void removeBall(int x, int y) {
         balls.removeIf(ball -> ball.x == x && ball.y == y);
     }
     private void removeTile(int x, int y) {
         if(x < tiles.size()) {
             if(y < tiles.get(x).size()) {
-                tiles.get(x).set(y, new Empty(Direction.NORTHSOUTHEASTWEST, x, y, tileSize));
+                tiles.get(x).set(y, new Empty(Direction.NORTHSOUTHEASTWEST, tileSize));
             }
         }
     }

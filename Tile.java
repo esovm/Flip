@@ -1,7 +1,7 @@
 abstract class Tile extends GraphicsObject{
 
-    Tile(Direction whichDirection, int posX, int posY, int sizeTile) {
-        super(whichDirection, posX, posY, sizeTile);
+    Tile(Direction whichDirection, int sizeTile) {
+        super(whichDirection, sizeTile);
     }
 
     abstract boolean getModifier(Ball b);
@@ -10,15 +10,15 @@ abstract class Tile extends GraphicsObject{
 
     abstract void update(Ball b, TileAndBallStorage tb);
 
-    abstract Tile clone(int posX, int posY, int sizeTile);
+    abstract Tile clone(int sizeTile);
 
-    static Tile create(int ascii,int x, int y, int sizeTile) {
-        Tile[] subClasses = new Tile[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0, 0, 0)};
+    static Tile create(int ascii, int sizeTile) {
+        Tile[] subClasses = new Tile[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0)};
         for (Tile sc : subClasses) {
             if (sc.getAscii() == ascii) {
-                return sc.clone(x, y, sizeTile);
+                return sc.clone(sizeTile);
             }
         }
-        return new Comment(Direction.NORTHSOUTHEASTWEST,x,y,sizeTile,ascii);
+        return new Comment(Direction.NORTHSOUTHEASTWEST,sizeTile,ascii);
     }
 }

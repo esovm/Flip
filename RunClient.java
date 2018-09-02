@@ -1,5 +1,5 @@
 public abstract class RunClient implements Runnable {
-    TileAndBallStorage tb;
+    Flip flip;
     boolean toStop = false;
     public abstract void stop();
 }

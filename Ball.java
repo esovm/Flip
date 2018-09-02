@@ -1,6 +1,14 @@
+import javafx.scene.canvas.GraphicsContext;
 
 class Ball extends GraphicsObject {
     int number;
+    int x;
+    int y;
+
+    void draw(GraphicsContext gc) {
+        gc.drawImage(findImage(), x * tileSize, y * tileSize, tileSize, tileSize);
+    }
+
     void update(TileAndBallStorage tb) {
         if(thisDirection == Direction.NORTH) {
             y--;
@@ -39,7 +47,9 @@ class Ball extends GraphicsObject {
     }
 
     Ball(Direction whichDirection, int posX, int posY, int sizeTile, int thisNumber) {
-        super(whichDirection,posX,posY,sizeTile);
+        super(whichDirection,sizeTile);
+        x = posX;
+        y = posY;
         number = thisNumber;
     }
 }

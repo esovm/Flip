@@ -3,8 +3,6 @@ import javafx.scene.image.Image;
 
 abstract class GraphicsObject {
     Direction thisDirection;
-    int x;
-    int y;
     int tileSize;
 
     abstract String getName();
@@ -13,19 +11,17 @@ abstract class GraphicsObject {
         return new Direction[0];
     }
 
-    private Image findImage() {
+    Image findImage() {
         return new Image(this.getClass().getResourceAsStream("\\Icons\\"+getName()));
     }
 
 
-    void draw(GraphicsContext gc) {
+    void draw(GraphicsContext gc,int x, int y) {
         gc.drawImage(findImage(), x * tileSize, y * tileSize, tileSize, tileSize);
     }
 
-    GraphicsObject(Direction whichDirection, int posX, int posY, int sizeTile) {
+    GraphicsObject(Direction whichDirection, int sizeTile) {
         thisDirection = whichDirection;
-        x = posX;
-        y = posY;
         tileSize = sizeTile;
     }
 

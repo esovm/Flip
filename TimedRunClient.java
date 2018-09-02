@@ -1,7 +1,7 @@
 public class TimedRunClient extends RunClient {
     private int milliseconds;
-    TimedRunClient(TileAndBallStorage tileAndBallStorage, int millis) {
-        tb = tileAndBallStorage;
+    TimedRunClient(Flip f, int millis) {
+        flip = f;
         milliseconds = millis;
     }
 
@@ -13,7 +13,10 @@ public class TimedRunClient extends RunClient {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            tb.update();
+            System.out.println("Test");
+            flip.tb.update();
+            flip.draw();
+
         } while(!toStop);
     }
 
