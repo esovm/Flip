@@ -4,11 +4,18 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class TileAndBallStorage {
+class TileAndBallStorage {
     private ArrayList<ArrayList<Tile>> tiles;
     private ArrayList<Ball> balls;
     private int tileSize;
-    public void read(String pathName) {
+    TileAndBallStorage(int sizeTile) {
+        tiles = new ArrayList<>();
+        balls = new ArrayList<>();
+        tileSize = sizeTile;
+    }
+
+
+    void read(String pathName) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(pathName));
             tiles = new ArrayList<>();
@@ -39,27 +46,24 @@ public class TileAndBallStorage {
                 }
             }
             Scanner sc = new Scanner(br);
-            br.read();
-            while(true) {
+            if(br.skip(1)!=1) throw new IOException("Warning: skip(long n) is not skipping n.");
+            do {
                 sc.useDelimiter(",");
                 int x = sc.nextInt();
                 int y = sc.nextInt();
                 int number = sc.nextInt();
                 sc.useDelimiter("}");
                 Direction d = Direction.getString(sc.next());
-                br.read();
-                balls.add(new Ball(d,x,y,tileSize,number));
-                if(!sc.hasNext()) {
-                    break;
-                }
-            }
+                if(br.skip(1)!=1) throw new IOException("Warning: skip(long n) is not skipping n."); 
+                balls.add(new Ball(d, x, y, tileSize, number));
+            } while (sc.hasNext());
         } catch(IOException e) {
             System.err.println("Warning: Could not read from file.");
             e.printStackTrace();
         }
         removeEmpty();
     }
-    public void write(String pathName) {
+    void write(String pathName) {
         removeEmpty();
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(pathName));
@@ -71,9 +75,8 @@ public class TileAndBallStorage {
             }
             bw.newLine();
             bw.write("Balls:[");
-            for(int i = 0; i < balls.size(); i++) {
-                Ball b = balls.get(i);
-                bw.write("{"+b.x+","+b.y+","+b.number+","+b.thisDirection.toString()+"}");
+            for (Ball b : balls) {
+                bw.write("{" + b.x + "," + b.y + "," + b.number + "," + b.thisDirection.toString() + "}");
             }
             bw.write("]");
             bw.close();
@@ -83,10 +86,10 @@ public class TileAndBallStorage {
         }
     }
     private void removeEmpty() {
-        for(int i = 0; i < tiles.size(); i++) {
-            while(true) {
-                if(tiles.get(i).get(tiles.get(i).size()-1) instanceof Empty) {
-                    tiles.get(i).remove(tiles.get(i).size()-1);
+        for (ArrayList<Tile> tile : tiles) {
+            while (true) {
+                if (tile.get(tile.size() - 1) instanceof Empty) {
+                    tile.remove(tile.size() - 1);
                 } else {
                     break;
                 }
@@ -100,7 +103,7 @@ public class TileAndBallStorage {
             }
         }
     }
-    public Tile getTileAtPos(int x, int y) {
+    Tile getTileAtPos(int x, int y) {
         if(tiles.size()>x) {
             if(tiles.get(x).size()>y) {
                 return tiles.get(x).get(y);
@@ -108,33 +111,35 @@ public class TileAndBallStorage {
         }
         return new Empty(Direction.NORTHSOUTHEASTWEST,x,y,tileSize);
     }
-    public void draw(GraphicsContext gc) {
-        for(int a = 0; a < tiles.size(); a++) {
-            for(int b = 0; b < tiles.get(a).size(); b++) {
-                tiles.get(a).get(b).draw(gc);
+    void draw(GraphicsContext gc) {
+        for (ArrayList<Tile> tile : tiles) {
+            for (Tile aTile : tile) {
+                aTile.draw(gc);
             }
         }
-        for(int i = 0; i < balls.size(); i++) {
-            balls.get(i).draw(gc);
+        for (Ball ball : balls) {
+            ball.draw(gc);
         }
     }
-    public void update() {
-        for(int i = 0; i < balls.size(); i++) {
-            balls.get(i).update(this);
+    synchronized void update() {
+        for (Ball ball : balls) {
+            ball.update(this);
         }
     }
-    public void place(int x, int y, GraphicsObject go) {
+    void place(GraphicsObject go) {
         if(go instanceof Ball) {
             placeBall((Ball) go);
         }
         if(go instanceof Tile) {
-            placeTile(x,y,(Tile) go);
+            placeTile((Tile) go);
         }
     }
     private void placeBall(Ball b) {
         balls.add(b);
     }
-    private void placeTile(int x, int y, Tile t) {
+    private void placeTile(Tile t) {
+        int x = t.x;
+        int y = t.y;
         if(tiles.size()>x) {
             if(tiles.get(x).size()>y) {
                 tiles.get(x).set(y,t);
@@ -142,16 +147,16 @@ public class TileAndBallStorage {
                 for(int i = 0; i < y - tiles.get(x).size() + 1; i++) {
                     tiles.get(x).add(new Empty(Direction.NORTHSOUTHEASTWEST,x,i,tileSize));
                 }
-                placeTile(x,y,t);
+                placeTile(t);
             }
         } else {
             for(int i = 0; i < x - tiles.size() + 1; i++) {
                 tiles.add(new ArrayList<>());
             }
-            placeTile(x,y,t);
+            placeTile(t);
         }
     }
-    public void remove(int x, int y) {
+    void remove(int x, int y) {
         removeBall(x,y);
         removeTile(x,y);
         removeEmpty();
@@ -160,38 +165,36 @@ public class TileAndBallStorage {
         balls.removeIf(ball -> ball.x == x && ball.y == y);
     }
     private void removeTile(int x, int y) {
-        tiles.get(x).set(y, new Empty(Direction.NORTHSOUTHEASTWEST, x, y, tileSize));
+        if(x < tiles.size()) {
+            if(y < tiles.get(x).size()) {
+                tiles.get(x).set(y, new Empty(Direction.NORTHSOUTHEASTWEST, x, y, tileSize));
+            }
+        }
     }
-    public void removeRect(int startX, int startY, int endX, int endY) {
+    void removeRect(int startX, int startY, int endX, int endY) {
         for(int a = startX; a < endX; a++) {
             for(int b = startY; b < endY; b++) {
                 remove(a,b);
             }
         }
     }
-    public void removeCol(int whichCol) {
+    void removeCol(int whichCol) {
         tiles.remove(whichCol);
     }
-    public void removeRow(int whichRow) {
-        for(int i = 0; i < tiles.size(); i++) {
-            tiles.get(i).remove(whichRow);
+    void removeRow(int whichRow) {
+        for (ArrayList<Tile> tile : tiles) {
+            tile.remove(whichRow);
         }
     }
-    public void deleteRect(int startX, int startY, int endX, int endY) {
+    void deleteRect(int startX, int startY, int endX, int endY) {
         int a = startX;
-        while(true) {
+        do {
             int b = startY;
-            while(true) {
+            do {
                 tiles.get(a).remove(startY);
                 b++;
-                if(b == endY) {
-                    break;
-                }
-            }
+            } while (b != endY);
             a++;
-            if(a == endX) {
-                break;
-            }
-        }
+        } while (a != endX);
     }
 }

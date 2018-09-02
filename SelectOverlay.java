@@ -1,27 +1,58 @@
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class SelectOverlay{
-    int startX = 0;
-    int startY = 0;
-    int endX = 0;
-    int endY = 0;
-    int tileSize;
+class SelectOverlay{
+    private int startX;
+    private int startY;
+    private int endX;
+    private int endY;
+    private int tileSize;
     private static final Color c = Color.color(0.5,0.5,0.5,0.5);
     private TileAndBallStorage tb;
-    public SelectOverlay(TileAndBallStorage tileAndBallStorage, int sizeTile) {
+    SelectOverlay(TileAndBallStorage tileAndBallStorage, int sizeTile) {
         tb = tileAndBallStorage;
         tileSize = sizeTile;
+        startX = 0;
+        startY = 0;
+        endX = 0;
+        endY = 0;
     }
-    public void selectStart(int x, int y) {
-
+    void selectStart(int x, int y) {
+        startX = x;
+        startY = y;
     }
-    public void drag(int x, int y) {
-
+    void drag(int x, int y) {
+        endX = x;
+        endY = y;
     }
-    public void erase() {
-
+    void erase() {
+        arrangeSelect();
+        tb.removeRect(startX, startY, endX, endY);
     }
-    public void delete() {
-
+    void delete() {
+        arrangeSelect();
+        tb.deleteRect(startX, startY, endX, endY);
+    }
+    private void arrangeSelect() {
+        if(startX > endX) {
+            int x = startX;
+            startX = endX;
+            endX = x;
+        }
+        if(startY > endY) {
+            int y = startY;
+            startY = endY;
+            endY = y;
+        }
+    }
+    void click(int x, int y) {
+        startX = x;
+        startY = y;
+        endX = x+1;
+        endY = y+1;
+    }
+    void draw(GraphicsContext gc) {
+        gc.setFill(c);
+        gc.fillRect(startX*tileSize, startY*tileSize, endX*tileSize, endY*tileSize);
     }
 }

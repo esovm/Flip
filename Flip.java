@@ -1,14 +1,21 @@
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Flip extends Application {
     private static int width = 1800;
@@ -22,8 +29,12 @@ public class Flip extends Application {
     private Button run;
     private Button load;
     private Button saveAs;
+    private Button stop;
+    private Button deleteHorizontal;
+    private Button deleteVertical;
     private TextField howFast;
     private SelectOverlay so;
+    private RunClient runClient;
     public static void main(String[] args) {
         try {
             width = Integer.parseInt(args[0]);
@@ -52,19 +63,55 @@ public class Flip extends Application {
         launch(args);
     }
 
+    private Image findImage(String name) {
+        return new Image(this.getClass().getResourceAsStream("\\Icons\\"+name));
+    }
+
     @Override
     public void start(Stage primaryStage) {
+        int unitX = canvasX/2;
+        int unitY = canvasY/2;
+
         primaryStage.setTitle("Flip 2.0");
-        Group root = new Group();
         primaryStage.setWidth(width);
         primaryStage.setHeight(height);
-        Canvas canvas = new Canvas(width - canvasX, height - canvasY);
-        canvas.setTranslateX(canvasX);
-        canvas.setTranslateY(canvasY);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        Group root = new Group();
+        List<Node> children = root.getChildren();
+
+        tb = new TileAndBallStorage(tileSize);
+
+        canvas = new Canvas(width - canvasX, height - canvasY);
+        canvas.relocate(canvasX, canvasY);
+        children.add(canvas);
+
+        gc = canvas.getGraphicsContext2D();
         gc.setTextAlign(TextAlignment.CENTER);
-        root.getChildren().add(canvas);
+
+        howFast = new TextField();
+        children.add(howFast);
+
+        run = new Button("",new ImageView(findImage("Run.png")));
+        run.setPrefWidth(unitX*2);
+        run.setPrefHeight(unitY*2);
+        run.setOnAction(event -> new Thread(runClient = new TimedRunClient(tb,Integer.parseInt(howFast.getText()))));
+        children.add(run);
+
+        stop = new Button("",new ImageView(findImage("Stop.png")));
+        stop.setPrefWidth(unitX*2);
+        stop.setPrefHeight(unitY*2);
+        stop.relocate(unitX*2,0);
+        stop.setOnAction(event -> runClient.stop());
+        children.add(stop);
+
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+    }
+
+    public void draw() {
+        gc.setFill(Color.DARKGRAY);
+        gc.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
+        tb.draw(gc);
+        so.draw(gc);
     }
 }

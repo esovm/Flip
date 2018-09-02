@@ -1,8 +1,7 @@
-import java.util.ArrayList;
 
-public class Ball extends GraphicsObject {
+class Ball extends GraphicsObject {
     int number;
-    public void update(TileAndBallStorage tb) {
+    void update(TileAndBallStorage tb) {
         if(thisDirection == Direction.NORTH) {
             y--;
         }
@@ -19,27 +18,27 @@ public class Ball extends GraphicsObject {
     }
 
     @Override
-    public String getName() {
+    String getName() {
         if(thisDirection == Direction.NORTH) {
-            return "BallUp.jpg";
+            return "BallUp.png";
         }
         if(thisDirection == Direction.SOUTH) {
-            return "BallDown.jpg";
+            return "BallDown.png";
         }
         if(thisDirection == Direction.EAST) {
-            return "BallRight.jpg";
+            return "BallRight.png";
         }
         if(thisDirection == Direction.WEST) {
-            return "BallLeft.jpg";
+            return "BallLeft.png";
         }
         throw new Error("Warning: This ball is not facing north or south or east or west");
     }
 
-    public static Direction[] getAllowedDirections() {
+    static Direction[] getAllowedDirections() {
         return new Direction[]{Direction.NORTH,Direction.SOUTH,Direction.EAST, Direction.WEST};
     }
 
-    public Ball(Direction whichDirection, int posX, int posY, int sizeTile, int thisNumber) {
+    Ball(Direction whichDirection, int posX, int posY, int sizeTile, int thisNumber) {
         super(whichDirection,posX,posY,sizeTile);
         number = thisNumber;
     }

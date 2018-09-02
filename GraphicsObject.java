@@ -1,28 +1,28 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public abstract class GraphicsObject {
-    public Direction thisDirection;
-    public int x;
-    public int y;
-    public int tileSize;
+abstract class GraphicsObject {
+    Direction thisDirection;
+    int x;
+    int y;
+    int tileSize;
 
-    public abstract String getName();
+    abstract String getName();
 
-    public static Direction[] getAllowedDirections() {
+    static Direction[] getAllowedDirections() {
         return new Direction[0];
     }
 
-    public Image findImage() {
+    private Image findImage() {
         return new Image(this.getClass().getResourceAsStream("\\Icons\\"+getName()));
     }
 
 
-    public void draw(GraphicsContext gc) {
+    void draw(GraphicsContext gc) {
         gc.drawImage(findImage(), x * tileSize, y * tileSize, tileSize, tileSize);
     }
 
-    public GraphicsObject(Direction whichDirection, int posX, int posY, int sizeTile) {
+    GraphicsObject(Direction whichDirection, int posX, int posY, int sizeTile) {
         thisDirection = whichDirection;
         x = posX;
         y = posY;

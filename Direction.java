@@ -1,4 +1,4 @@
-public enum Direction {
+enum Direction {
     NORTH, SOUTH, WEST, EAST, NORTHSOUTH, EASTWEST, NORTHSOUTHEASTWEST;
 
     @Override
@@ -6,7 +6,7 @@ public enum Direction {
         return name();
     }
 
-    public static Direction getString(String s) {
+    static Direction getString(String s) {
         Direction d = NORTH;
         if(s.equals(d.toString())) {
             return d;
