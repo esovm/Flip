@@ -1,6 +1,6 @@
 class Empty extends Tile {
     @Override
-    int getAscii() {
+    char getAscii() {
         return ' ';
     }
 

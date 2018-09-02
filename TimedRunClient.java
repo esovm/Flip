@@ -13,7 +13,6 @@ public class TimedRunClient extends RunClient {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("Test");
             flip.tb.update();
             flip.draw();
 

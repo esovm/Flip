@@ -1,8 +1,8 @@
 import javafx.scene.canvas.GraphicsContext;
 
 class Comment extends Tile {
-    private int c;
-    Comment(Direction whichDirection, int sizeTile, int whichCharacter) {
+    private char c;
+    Comment(Direction whichDirection, int sizeTile, char whichCharacter) {
         super(whichDirection, sizeTile);
         c = whichCharacter;
     }
@@ -13,7 +13,7 @@ class Comment extends Tile {
     }
 
     @Override
-    int getAscii() {
+    char getAscii() {
         return c;
     }
 

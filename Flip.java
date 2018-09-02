@@ -1,6 +1,4 @@
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,7 +14,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Flip extends Application {
@@ -33,7 +30,7 @@ public class Flip extends Application {
     private TextField howFast;
     private TextField input;
     private SelectOverlay so;
-    private RunClient runClient;
+    private RunClient runClient = null;
     private File f;
     private FileChooser fc;
     public static void main(String[] args) {
@@ -85,27 +82,6 @@ public class Flip extends Application {
         tb = new TileAndBallStorage(tileSize);
         so = new SelectOverlay(tb, tileSize);
 
-        canvas = new Canvas(width - canvasX, height - canvasY);
-        canvas.relocate(canvasX, canvasY);
-        children.add(canvas);
-
-        gc = canvas.getGraphicsContext2D();
-        gc.setTextAlign(TextAlignment.CENTER);
-
-        howFast = new TextField();
-        howFast.setPromptText("How fast the program should run.");
-        howFast.setPrefWidth(unitX*2);
-        howFast.setPrefHeight(unitY);
-        howFast.relocate(unitX*4+10,0);
-        children.add(howFast);
-
-        input = new TextField();
-        input.setPromptText("Input for the program.");
-        input.setPrefWidth(unitX*2);
-        input.setPrefHeight(unitY);
-        input.relocate(unitX*4+10,unitY);
-        children.add(input);
-
         Button load = new Button("", new ImageView(findImage("Load.png")));
         load.setPrefWidth(unitX*2);
         load.setPrefHeight(unitY*2);
@@ -134,22 +110,53 @@ public class Flip extends Application {
         Button run = new Button("", new ImageView(findImage("Run.png")));
         run.setPrefWidth(unitX*2);
         run.setPrefHeight(unitY*2);
-        run.setOnAction(event -> new Thread(runClient = new TimedRunClient(this,Integer.parseInt(howFast.getText()))).start());
+        run.setOnAction(event -> {
+            if(runClient == null) {
+                new Thread(runClient = new TimedRunClient(this, Integer.parseInt(howFast.getText()))).start();
+            }
+        });
         children.add(run);
 
         Button stop = new Button("", new ImageView(findImage("Stop.png")));
         stop.setPrefWidth(unitX*2);
         stop.setPrefHeight(unitY*2);
         stop.relocate(unitX*2,0);
-        stop.setOnAction(event ->{if(runClient != null) { runClient.stop();}});
+        stop.setOnAction(event ->{
+            if(runClient != null) {
+                runClient.stop();
+                runClient = null;
+            }
+        });
         children.add(stop);
 
+        howFast = new TextField();
+        howFast.setPromptText("How fast the program should run.");
+        howFast.setPrefWidth(unitX*2);
+        howFast.setPrefHeight(unitY);
+        howFast.relocate(unitX*4,0);
+        children.add(howFast);
+
+        input = new TextField();
+        input.setPromptText("Input for the program.");
+        input.setPrefWidth(unitX*2);
+        input.setPrefHeight(unitY);
+        input.relocate(unitX*4,unitY);
+        children.add(input);
+
+        canvas = new Canvas(width - canvasX, height - canvasY);
+        canvas.relocate(canvasX, canvasY);
+        children.add(canvas);
+
+        gc = canvas.getGraphicsContext2D();
+        gc.setTextAlign(TextAlignment.CENTER);
+
+        primaryStage.setOnCloseRequest(event -> stop.fire());
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         draw();
     }
 
-    public void draw() {
+    void draw() {
         gc.setFill(Color.gray(0.25));
         gc.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
         tb.draw(gc);

@@ -17,60 +17,69 @@ class TileAndBallStorage {
 
     void read(File f) {
         try {
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            tiles = new ArrayList<>();
-            int a = 0;
-            boolean twoNewLines = false;
-            while(true) {
-                ArrayList<Tile> al = new ArrayList<>();
-                int b = 0;
-                while(true) {
-                    int c = br.read();
-                    if(c != '\n') {
-                        al.add(Tile.create(br.read(), tileSize));
-                        twoNewLines = false;
-                    } else {
-                        tiles.add(al);
+            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                tiles = new ArrayList<>();
+                balls = new ArrayList<>();
+                boolean twoNewLines = false;
+                while (true) {
+                    ArrayList<Tile> al = new ArrayList<>();
+                    while (true) {
+                        int c = br.read();
+                        System.out.println(c);
+                        if (c != '\r') {
+                            if (c != '\n') {
+                                al.add(Tile.create((char) c, tileSize));
+                                twoNewLines = false;
+                            } else {
+                                tiles.add(al);
+                                break;
+                            }
+                        }
+
+                    }
+                    if (twoNewLines) {
+                        break;
+                    }
+                    twoNewLines = true;
+                }
+                while (true) {
+                    if (br.read() == '{') {
                         break;
                     }
                 }
-                if(twoNewLines) {
-                    break;
-                }
-                twoNewLines = true;
-                a++;
+                Scanner sc = new Scanner(br);
+                do {
+                    sc.useDelimiter(",");
+                    int x = sc.nextInt();
+                    System.out.println(x);
+                    int y = sc.nextInt();
+                    System.out.println(y);
+                    int number = sc.nextInt();
+                    System.out.println(number);
+                    sc.useDelimiter("}");
+                    sc.skip(",");
+                    String s = sc.next();
+                    Direction d = Direction.getString(s);
+                    System.out.println(s);
+                    balls.add(new Ball(d, x, y, tileSize, number));
+                    sc.skip("}");
+                    sc.skip("(])|(\\{)");
+                } while (sc.hasNext());
+                sc.close();
             }
-            while(true) {
-                if(br.read()=='[') {
-                    break;
-                }
-            }
-            Scanner sc = new Scanner(br);
-            if(br.skip(1)!=1) throw new IOException("Warning: skip(long n) is not skipping n.");
-            do {
-                sc.useDelimiter(",");
-                int x = sc.nextInt();
-                int y = sc.nextInt();
-                int number = sc.nextInt();
-                sc.useDelimiter("}");
-                Direction d = Direction.getString(sc.next());
-                if(br.skip(1)!=1) throw new IOException("Warning: skip(long n) is not skipping n."); 
-                balls.add(new Ball(d, x, y, tileSize, number));
-            } while (sc.hasNext());
-            sc.close();
         } catch(IOException e) {
             System.err.println("Warning: Could not read from file.");
             e.printStackTrace();
         }
-        removeEmpty();
+        //removeEmpty();
     }
     void write(File f) {
-        removeEmpty();
+        //removeEmpty();
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-            for(int a = 0; a < tiles.size(); a++) {
-                for(int b = 0; b < tiles.size(); b++) {
-                    bw.write(tiles.get(a).get(b).getAscii());
+            for (ArrayList<Tile> tile : tiles) {
+                for (Tile aTile : tile) {
+                    bw.write(aTile.getAscii());
                 }
                 bw.newLine();
             }
@@ -89,18 +98,24 @@ class TileAndBallStorage {
     private void removeEmpty() {
         for (ArrayList<Tile> tile : tiles) {
             while (true) {
-                if (tile.get(tile.size() - 1) instanceof Empty) {
-                    tile.remove(tile.size() - 1);
+                if(tile.size() > 0) {
+                    if (tile.get(tile.size() - 1) instanceof Empty) {
+                        tile.remove(tile.size() - 1);
+                    } else {
+                        break;
+                    }
                 } else {
                     break;
                 }
             }
         }
         while(true) {
-            if(tiles.get(tiles.size()-1).size()==0) {
-                tiles.remove(tiles.size()-1);
-            } else {
-                break;
+            if(tiles.size() > 0) {
+                if (tiles.get(tiles.size() - 1).size() == 0) {
+                    tiles.remove(tiles.size() - 1);
+                } else {
+                    break;
+                }
             }
         }
     }
@@ -114,7 +129,7 @@ class TileAndBallStorage {
     }
     void draw(GraphicsContext gc) {
         for (int a = 0; a < tiles.size(); a++) {
-            for (int b = 0; b < tiles.size(); b++) {
+            for (int b = 0; b < tiles.get(a).size(); b++) {
                 tiles.get(a).get(b).draw(gc, a, b);
             }
         }
