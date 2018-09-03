@@ -7,7 +7,7 @@ import java.util.Scanner;
 class TileAndBallStorage {
     private ArrayList<ArrayList<Tile>> tiles;
     private ArrayList<Ball> balls;
-    private int tileSize;
+    int tileSize;
     TileAndBallStorage(int sizeTile) {
         tiles = new ArrayList<>();
         balls = new ArrayList<>();

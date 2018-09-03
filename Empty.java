@@ -9,7 +9,7 @@ class Empty extends Tile {
     }
 
     @Override
-    protected Empty clone(int sizeTile) {
+    public Empty clone(int sizeTile) {
         return new Empty(thisDirection,sizeTile);
     }
 

@@ -6,6 +6,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -25,14 +27,14 @@ public class Flip extends Application {
     TileAndBallStorage tb;
     private GraphicsContext gc;
     private Canvas canvas;
-    private Button deleteHorizontal;
-    private Button deleteVertical;
+    private SelectOverlay so;
     private TextField howFast;
     private TextField input;
-    private SelectOverlay so;
     private RunClient runClient = null;
     private File f;
     private FileChooser fc;
+    private Tile currentPlace = null;
+
     public static void main(String[] args) {
         try {
             width = Integer.parseInt(args[0]);
@@ -69,6 +71,8 @@ public class Flip extends Application {
     public void start(Stage primaryStage) {
         int unitX = canvasX/2;
         int unitY = canvasY/2;
+
+        currentPlace = new Empty(Direction.NORTHSOUTHEASTWEST, tileSize);
 
         fc = new FileChooser();
 
@@ -129,6 +133,34 @@ public class Flip extends Application {
         });
         children.add(stop);
 
+        ToggleButton selectMode = new ToggleButton(""
+                //, new ImageView(findImage("Select.png"))
+        );
+        selectMode.setPrefWidth(unitX*2);
+        selectMode.setPrefHeight(unitY*2);
+        selectMode.relocate(unitX*10, 0);
+        children.add(selectMode);
+
+        ToggleGroup horVer = new ToggleGroup();
+
+        ToggleButton deleteHorizontal = new ToggleButton(""
+                //, new ImageView(findImage("Select.png"))
+        );
+        deleteHorizontal.setPrefWidth(unitX*2);
+        deleteHorizontal.setPrefHeight(unitY);
+        deleteHorizontal.relocate(unitX*12, 0);
+        deleteHorizontal.setToggleGroup(horVer);
+        children.add(deleteHorizontal);
+
+        ToggleButton deleteVertical = new ToggleButton(""
+                //, new ImageView(findImage("Select.png"))
+        );
+        deleteVertical.setPrefWidth(unitX*2);
+        deleteVertical.setPrefHeight(unitY*2);
+        deleteVertical.relocate(unitX*12, unitY);
+        deleteVertical.setToggleGroup(horVer);
+        children.add(deleteVertical);
+
         howFast = new TextField();
         howFast.setPromptText("How fast the program should run.");
         howFast.setPrefWidth(unitX*2);
@@ -150,8 +182,37 @@ public class Flip extends Application {
         gc = canvas.getGraphicsContext2D();
         gc.setTextAlign(TextAlignment.CENTER);
 
+        Scene s = new Scene(root);
+        s.setOnMousePressed(event -> {
+            int x = ((int) event.getX()-canvasX)/tileSize;
+            int y = ((int) event.getY()-canvasY)/tileSize;
+            if(x >= 0 && y >= 0) {
+                so.select(x,y);
+            }
+            draw();
+            System.out.println("press");
+        });
+        s.setOnMouseDragged(event -> {
+            int x = ((int) event.getX()-canvasX)/tileSize;
+            int y = ((int) event.getY()-canvasY)/tileSize;
+            if(x >= 0 && y >= 0) {
+                so.drag(x,y);
+            }
+            draw();
+            System.out.println("drag");
+        });
+        s.setOnMouseReleased(event -> {
+
+        });
+        s.setOnKeyPressed(event -> {
+            currentPlace = Tile.create(event.getCharacter().charAt(0),tileSize);
+        });
+        s.setOnKeyReleased(event -> {
+
+        });
+
         primaryStage.setOnCloseRequest(event -> stop.fire());
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(s);
         primaryStage.show();
         draw();
     }

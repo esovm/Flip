@@ -23,7 +23,7 @@ class Comment extends Tile {
     }
 
     @Override
-    Tile clone(int sizeTile) {
+    public Comment clone(int sizeTile) {
         return new Comment(thisDirection, sizeTile,getAscii());
     }
 

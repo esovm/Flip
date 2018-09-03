@@ -7,6 +7,10 @@ abstract class GraphicsObject {
 
     abstract String getName();
 
+    public abstract GraphicsObject clone(int sizeTile);
+
+    abstract char getAscii();
+
     static Direction[] getAllowedDirections() {
         return new Direction[0];
     }
@@ -23,6 +27,16 @@ abstract class GraphicsObject {
     GraphicsObject(Direction whichDirection, int sizeTile) {
         thisDirection = whichDirection;
         tileSize = sizeTile;
+    }
+
+    static GraphicsObject create(char ascii, int sizeTile) {
+        GraphicsObject[] subClasses = new GraphicsObject[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0)};
+        for (GraphicsObject sc : subClasses) {
+            if (sc.getAscii() == ascii) {
+                return sc.clone(sizeTile);
+            }
+        }
+        return new Comment(Direction.NORTHSOUTHEASTWEST,sizeTile,ascii);
     }
 
 

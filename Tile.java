@@ -6,11 +6,9 @@ abstract class Tile extends GraphicsObject{
 
     abstract boolean getModifier(Ball b);
 
-    abstract char getAscii();
-
     abstract void update(Ball b, TileAndBallStorage tb);
 
-    abstract Tile clone(int sizeTile);
+    public abstract Tile clone(int sizeTile);
 
     static Tile create(char ascii, int sizeTile) {
         Tile[] subClasses = new Tile[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0)};

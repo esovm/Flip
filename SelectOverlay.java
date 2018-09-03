@@ -1,58 +1,88 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
+
 class SelectOverlay{
-    private int startX;
-    private int startY;
-    private int endX;
-    private int endY;
+    private Point start = new Point(-1,-1);
+    private Point end = new Point(-1,-1);
     private int tileSize;
-    private static final Color c = Color.color(0.5,0.5,0.5,0.5);
+    private static final Color c = Color.color(0,0,1,0.5);
     private TileAndBallStorage tb;
     SelectOverlay(TileAndBallStorage tileAndBallStorage, int sizeTile) {
         tb = tileAndBallStorage;
         tileSize = sizeTile;
-        startX = 0;
-        startY = 0;
-        endX = 0;
-        endY = 0;
     }
-    void selectStart(int x, int y) {
-        startX = x;
-        startY = y;
+    void select(int x, int y) {
+        clear();
+        start = new Point(x,y);
+        end = start;
+    }
+    void fillMove(GraphicsObject go) {
+        Point s = arrangeStart();
+        Point e = arrangeEnd();
+        for(int a = s.x; a <= e.x; a++) {
+            for(int b = s.y; b <= e.y; b++) {
+                tb.place(go.clone(tb.tileSize),a,b);
+            }
+        }
+        start = new Point(end.x, start.y);
+        end = new Point(2*end.x, end.y);
+    }
+    void cut() {
+
+    }
+    void paste() {
+
     }
     void drag(int x, int y) {
-        endX = x;
-        endY = y;
+        end = new Point(x,y);
+    }
+    void clear() {
+       start = new Point(-1,-1);
+       end = new Point(-1,-1);
     }
     void erase() {
-        arrangeSelect();
-        tb.removeRect(startX, startY, endX, endY);
+        Point s = arrangeStart();
+        Point e = arrangeEnd();
+        tb.removeRect(s.x, s.y, e.x, e.y);
     }
     void delete() {
-        arrangeSelect();
-        tb.deleteRect(startX, startY, endX, endY);
+        Point s = arrangeStart();
+        Point e = arrangeEnd();
+        tb.deleteRect(s.x, s.y, e.x, e.y);
     }
-    private void arrangeSelect() {
-        if(startX > endX) {
-            int x = startX;
+    Point arrangeStart() {
+        int startX = start.x;
+        int startY = start.y;
+        int endX = end.x;
+        int endY = end.y;
+        if(endX < startX) {
             startX = endX;
-            endX = x;
         }
-        if(startY > endY) {
-            int y = startY;
+        if(endY < startY) {
             startY = endY;
-            endY = y;
         }
+        return new Point(startX, startY);
     }
-    void click(int x, int y) {
-        startX = x;
-        startY = y;
-        endX = x+1;
-        endY = y+1;
+    Point arrangeEnd() {
+        int startX = start.x;
+        int startY = start.y;
+        int endX = end.x;
+        int endY = end.y;
+        if(endX < startX) {
+            endX = startX;
+        }
+        if(endY < startY) {
+            endY = startY;
+        }
+        return new Point(endX+1, endY+1);
     }
     void draw(GraphicsContext gc) {
+        Point s = arrangeStart();
+        Point e = arrangeEnd();
         gc.setFill(c);
-        gc.fillRect(startX*tileSize, startY*tileSize, endX*tileSize, endY*tileSize);
+        gc.fillRect(s.x*tileSize, s.y*tileSize, e.x*tileSize-s.x*tileSize, e.y*tileSize-s.y*tileSize);
     }
 }
