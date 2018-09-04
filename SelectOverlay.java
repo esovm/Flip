@@ -18,25 +18,40 @@ class SelectOverlay{
         start = new Point(x,y);
         end = start;
     }
-    void fillMove(GraphicsObject go) {
+    void fill(GraphicsObject go) {
         Point s = arrangeStart();
-        flip.tb.place(go.clone(flip.tb.tileSize),s.x,s.y);
-        start = new Point(start.x+1, start.y);
-        end = new Point(end.x+1, end.y);
+        Point e = arrangeEnd();
+        if(e.x - s.x == 1 && e.y - s.y == 1) {
+            flip.tb.place(go.clone(tileSize),s.x,s.y);
+            start = new Point(start.x+1, start.y);
+            end = new Point(end.x+1, end.y);
+        } else if(go instanceof Empty) {
+            erase();
+        } else {
+            for(int a = s.x; a < e.x; a++) {
+                for(int b = s.y; b < e.y; b++) {
+                    flip.tb.place(go.clone(tileSize),a,b);
+                }
+            }
+        }
         flip.draw();
     }
     void cut() {
-
+        copy();
+        erase();
     }
     void paste() {
+
+    }
+    void copy() {
 
     }
     void drag(int x, int y) {
         end = new Point(x,y);
     }
     void clear() {
-       start = new Point(-1,-1);
-       end = new Point(-1,-1);
+        start = new Point(-1,-1);
+        end = new Point(-1,-1);
     }
     void erase() {
         Point s = arrangeStart();

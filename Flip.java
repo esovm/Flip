@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -10,6 +11,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
@@ -187,7 +190,11 @@ public class Flip extends Application {
             int x = ((int) event.getX() - canvasX) / tileSize;
             int y = ((int) event.getY() - canvasY) / tileSize;
             if (x >= 0 && y >= 0) {
-                if (selectMode.isSelected() ^ event.isShiftDown()) {
+                if (deleteHorizontal.isSelected()) {
+                    tb.removeRow(y);
+                } else if (deleteVertical.isSelected()) {
+                    tb.removeCol(x);
+                } else if (selectMode.isSelected() ^ event.isShiftDown()) {
                     so.select(x, y);
                 } else {
                     so.clear();
@@ -197,8 +204,6 @@ public class Flip extends Application {
                 }
             }
             draw();
-
-            System.out.println("press");
         });
         s.setOnMouseDragged(event -> {
             int x = ((int) event.getX() - canvasX) / tileSize;
@@ -210,24 +215,31 @@ public class Flip extends Application {
                     so.clear();
                     System.out.println(currentPlace.getClass().getName());
                     tb.place(currentPlace.clone(tileSize), x, y);
-                    //Always is comment or empty.
                 }
             }
             draw();
-            System.out.println("drag");
         });
-        s.setOnKeyPressed(event -> {
+        s.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             String character = event.getText();
             if(character.length() > 0) {
-                if(selectMode.isSelected() ^ event.isShiftDown()) {
-                    so.fillMove(GraphicsObject.create(character.charAt(0)));
-                } else {
-                    currentPlace = GraphicsObject.create(character.charAt(0));
+                char c = character.charAt(0);
+                if(event.isControlDown()) {
+                    if(c == 'c') {
+                        so.copy();
+                    } else if( c == 'v') {
+                        so.paste();
+                    } else if(c == 'x') {
+                        so.cut();
+                    }
+                } else if (!event.isAltDown()) {
+                    if(selectMode.isSelected() ^ event.isShiftDown()) {
+                        so.fill(GraphicsObject.create(c));
+                    } else {
+                        currentPlace = GraphicsObject.create(c);
+                    }
                 }
             }
-        });
-        s.setOnKeyReleased(event -> {
-
+            event.consume();
         });
 
         primaryStage.setOnCloseRequest(event -> stop.fire());
