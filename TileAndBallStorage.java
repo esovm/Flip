@@ -120,8 +120,8 @@ class TileAndBallStorage {
         }
     }
     Tile getTileAtPos(int x, int y) {
-        if(tiles.size()>x) {
-            if(tiles.get(x).size()>y) {
+        if(tiles.size()>x && x >= 0) {
+            if(tiles.get(x).size()>y && y >= 0) {
                 return tiles.get(x).get(y);
             }
         }
@@ -144,7 +144,10 @@ class TileAndBallStorage {
     }
     void place(GraphicsObject go, int x, int y) {
         if(go instanceof Ball) {
-            placeBall((Ball) go);
+            Ball b = (Ball) go;
+            b.x = x;
+            b.y = y;
+            placeBall(b);
         }
         if(go instanceof Tile) {
             placeTile((Tile) go, x, y);

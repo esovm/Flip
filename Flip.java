@@ -33,7 +33,7 @@ public class Flip extends Application {
     private RunClient runClient = null;
     private File f;
     private FileChooser fc;
-    private Tile currentPlace = null;
+    private GraphicsObject currentPlace = null;
 
     public static void main(String[] args) {
         try {
@@ -84,7 +84,7 @@ public class Flip extends Application {
         List<Node> children = root.getChildren();
 
         tb = new TileAndBallStorage(tileSize);
-        so = new SelectOverlay(tb, tileSize);
+        so = new SelectOverlay(this, tileSize);
 
         Button load = new Button("", new ImageView(findImage("Load.png")));
         load.setPrefWidth(unitX*2);
@@ -184,28 +184,47 @@ public class Flip extends Application {
 
         Scene s = new Scene(root);
         s.setOnMousePressed(event -> {
-            int x = ((int) event.getX()-canvasX)/tileSize;
-            int y = ((int) event.getY()-canvasY)/tileSize;
-            if(x >= 0 && y >= 0) {
-                so.select(x,y);
+            int x = ((int) event.getX() - canvasX) / tileSize;
+            int y = ((int) event.getY() - canvasY) / tileSize;
+            if (x >= 0 && y >= 0) {
+                if (selectMode.isSelected() ^ event.isShiftDown()) {
+                    so.select(x, y);
+                } else {
+                    so.clear();
+                    System.out.println(currentPlace.getClass().getName());
+                    tb.place(currentPlace.clone(tileSize), x, y);
+                    //Always is comment or empty.
+                }
             }
             draw();
+
             System.out.println("press");
         });
         s.setOnMouseDragged(event -> {
-            int x = ((int) event.getX()-canvasX)/tileSize;
-            int y = ((int) event.getY()-canvasY)/tileSize;
-            if(x >= 0 && y >= 0) {
-                so.drag(x,y);
+            int x = ((int) event.getX() - canvasX) / tileSize;
+            int y = ((int) event.getY() - canvasY) / tileSize;
+            if (x >= 0 && y >= 0) {
+                if (selectMode.isSelected() ^ event.isShiftDown()) {
+                    so.drag(x, y);
+                } else {
+                    so.clear();
+                    System.out.println(currentPlace.getClass().getName());
+                    tb.place(currentPlace.clone(tileSize), x, y);
+                    //Always is comment or empty.
+                }
             }
             draw();
             System.out.println("drag");
         });
-        s.setOnMouseReleased(event -> {
-
-        });
         s.setOnKeyPressed(event -> {
-            currentPlace = Tile.create(event.getCharacter().charAt(0),tileSize);
+            String character = event.getText();
+            if(character.length() > 0) {
+                if(selectMode.isSelected() ^ event.isShiftDown()) {
+                    so.fillMove(GraphicsObject.create(character.charAt(0)));
+                } else {
+                    currentPlace = GraphicsObject.create(character.charAt(0));
+                }
+            }
         });
         s.setOnKeyReleased(event -> {
 

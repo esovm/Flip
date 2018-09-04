@@ -2,16 +2,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 
 class SelectOverlay{
     private Point start = new Point(-1,-1);
     private Point end = new Point(-1,-1);
     private int tileSize;
     private static final Color c = Color.color(0,0,1,0.5);
-    private TileAndBallStorage tb;
-    SelectOverlay(TileAndBallStorage tileAndBallStorage, int sizeTile) {
-        tb = tileAndBallStorage;
+    private Flip flip;
+    SelectOverlay(Flip f, int sizeTile) {
+        flip = f;
         tileSize = sizeTile;
     }
     void select(int x, int y) {
@@ -21,14 +20,10 @@ class SelectOverlay{
     }
     void fillMove(GraphicsObject go) {
         Point s = arrangeStart();
-        Point e = arrangeEnd();
-        for(int a = s.x; a <= e.x; a++) {
-            for(int b = s.y; b <= e.y; b++) {
-                tb.place(go.clone(tb.tileSize),a,b);
-            }
-        }
-        start = new Point(end.x, start.y);
-        end = new Point(2*end.x, end.y);
+        flip.tb.place(go.clone(flip.tb.tileSize),s.x,s.y);
+        start = new Point(start.x+1, start.y);
+        end = new Point(end.x+1, end.y);
+        flip.draw();
     }
     void cut() {
 
@@ -46,12 +41,12 @@ class SelectOverlay{
     void erase() {
         Point s = arrangeStart();
         Point e = arrangeEnd();
-        tb.removeRect(s.x, s.y, e.x, e.y);
+        flip.tb.removeRect(s.x, s.y, e.x, e.y);
     }
     void delete() {
         Point s = arrangeStart();
         Point e = arrangeEnd();
-        tb.deleteRect(s.x, s.y, e.x, e.y);
+        flip.tb.deleteRect(s.x, s.y, e.x, e.y);
     }
     Point arrangeStart() {
         int startX = start.x;

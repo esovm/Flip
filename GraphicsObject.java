@@ -29,14 +29,16 @@ abstract class GraphicsObject {
         tileSize = sizeTile;
     }
 
-    static GraphicsObject create(char ascii, int sizeTile) {
-        GraphicsObject[] subClasses = new GraphicsObject[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0)};
+    static GraphicsObject create(char ascii) {
+        GraphicsObject[] subClasses = new GraphicsObject[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0),
+                new Ball(Direction.NORTH, 0,0,0,0), new Ball(Direction.SOUTH, 0,0,0,0),
+                new Ball(Direction.EAST, 0,0,0,0), new Ball(Direction.WEST, 0,0,0,0) };
         for (GraphicsObject sc : subClasses) {
             if (sc.getAscii() == ascii) {
-                return sc.clone(sizeTile);
+                return sc;
             }
         }
-        return new Comment(Direction.NORTHSOUTHEASTWEST,sizeTile,ascii);
+        return new Comment(Direction.NORTHSOUTHEASTWEST,0,ascii);
     }
 
 
