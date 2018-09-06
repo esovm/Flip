@@ -22,7 +22,11 @@ class SelectOverlay{
         Point s = arrangeStart();
         Point e = arrangeEnd();
         if(e.x - s.x == 1 && e.y - s.y == 1) {
-            flip.tb.place(go.clone(tileSize),s.x,s.y);
+            if(go instanceof Empty) {
+                flip.tb.remove(s.x,s.y);
+            } else {
+                flip.tb.place(go.clone(tileSize), s.x, s.y);
+            }
             start = new Point(start.x+1, start.y);
             end = new Point(end.x+1, end.y);
         } else if(go instanceof Empty) {
@@ -39,12 +43,18 @@ class SelectOverlay{
     void cut() {
         copy();
         erase();
+        flip.draw();
     }
     void paste() {
-
+        Point s = arrangeStart();
+        flip.tb.pasteRect(s.x,s.y);
+        flip.draw();
     }
     void copy() {
-
+        Point s = arrangeStart();
+        Point e = arrangeEnd();
+        flip.tb.copyRect(s.x,s.y,e.x,e.y);
+        flip.draw();
     }
     void drag(int x, int y) {
         end = new Point(x,y);
@@ -62,6 +72,7 @@ class SelectOverlay{
         Point s = arrangeStart();
         Point e = arrangeEnd();
         flip.tb.deleteRect(s.x, s.y, e.x, e.y);
+        flip.draw();
     }
     Point arrangeStart() {
         int startX = start.x;

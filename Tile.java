@@ -11,7 +11,8 @@ abstract class Tile extends GraphicsObject{
     public abstract Tile clone(int sizeTile);
 
     static Tile create(char ascii, int sizeTile) {
-        Tile[] subClasses = new Tile[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0)};
+        Tile[] subClasses = new Tile[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0),new Sluce(Direction.NORTH,0),new Sluce(Direction.SOUTH,0),
+                new Sluce(Direction.EAST,0),new Sluce(Direction.WEST,0)};
         for (Tile sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc.clone(sizeTile);

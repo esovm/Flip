@@ -7,7 +7,8 @@ import java.util.Scanner;
 class TileAndBallStorage {
     private ArrayList<ArrayList<Tile>> tiles;
     private ArrayList<Ball> balls;
-    int tileSize;
+    private int tileSize;
+    private TileAndBallStorage copy = null;
     TileAndBallStorage(int sizeTile) {
         tiles = new ArrayList<>();
         balls = new ArrayList<>();
@@ -20,27 +21,28 @@ class TileAndBallStorage {
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
                 tiles = new ArrayList<>();
                 balls = new ArrayList<>();
-                boolean twoNewLines = false;
+                boolean toBreak = false;
                 while (true) {
                     ArrayList<Tile> al = new ArrayList<>();
                     while (true) {
                         int c = br.read();
+                        if(c == '\t') {
+                            toBreak = true;
+                            break;
+                        }
                         System.out.println(c);
                         if (c != '\r') {
                             if (c != '\n') {
                                 al.add(Tile.create((char) c, tileSize));
-                                twoNewLines = false;
                             } else {
                                 tiles.add(al);
                                 break;
                             }
                         }
-
                     }
-                    if (twoNewLines) {
+                    if(toBreak) {
                         break;
                     }
-                    twoNewLines = true;
                 }
                 while (true) {
                     if (br.read() == '{') {
@@ -71,10 +73,10 @@ class TileAndBallStorage {
             System.err.println("Warning: Could not read from file.");
             e.printStackTrace();
         }
-        //removeEmpty();
+        removeEmpty();
     }
     void write(File f) {
-        //removeEmpty();
+        removeEmpty();
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             for (ArrayList<Tile> tile : tiles) {
@@ -83,7 +85,7 @@ class TileAndBallStorage {
                 }
                 bw.newLine();
             }
-            bw.newLine();
+            bw.write('\t');
             bw.write("Balls:[");
             for (Ball b : balls) {
                 bw.write("{" + b.x + "," + b.y + "," + b.number + "," + b.thisDirection.toString() + "}");
@@ -96,26 +98,18 @@ class TileAndBallStorage {
         }
     }
     private void removeEmpty() {
-        for (ArrayList<Tile> tile : tiles) {
-            while (true) {
-                if(tile.size() > 0) {
-                    if (tile.get(tile.size() - 1) instanceof Empty) {
-                        tile.remove(tile.size() - 1);
-                    } else {
-                        break;
-                    }
+        for(ArrayList<Tile> tile: tiles) {
+            for(int i = tile.size() - 1; i >= 0; i--) {
+                if(tile.get(tile.size() - 1) instanceof Empty) {
+                    tile.remove(tile.size() - 1);
                 } else {
                     break;
                 }
             }
         }
-        while(true) {
-            if(tiles.size() > 0) {
-                if (tiles.get(tiles.size() - 1).size() == 0) {
-                    tiles.remove(tiles.size() - 1);
-                } else {
-                    break;
-                }
+        for(int i = tiles.size() - 1; i >= 0; i--) {
+            if(tiles.get(tiles.size() - 1).size() == 0) {
+                tiles.remove(tiles.size() - 1);
             }
         }
     }
@@ -143,14 +137,18 @@ class TileAndBallStorage {
         }
     }
     void place(GraphicsObject go, int x, int y) {
-        if(go instanceof Ball) {
-            Ball b = (Ball) go;
-            b.x = x;
-            b.y = y;
-            placeBall(b);
-        }
-        if(go instanceof Tile) {
-            placeTile((Tile) go, x, y);
+        if(go instanceof Empty) {
+            remove(x,y);
+        } else {
+            if (go instanceof Ball) {
+                Ball b = (Ball) go;
+                b.x = x;
+                b.y = y;
+                placeBall(b);
+            }
+            if (go instanceof Tile) {
+                placeTile((Tile) go, x, y);
+            }
         }
     }
     private void placeBall(Ball b) {
@@ -176,7 +174,6 @@ class TileAndBallStorage {
     void remove(int x, int y) {
         removeBall(x,y);
         removeTile(x,y);
-        removeEmpty();
     }
     void removeBall(int x, int y) {
         balls.removeIf(ball -> ball.x == x && ball.y == y);
@@ -196,22 +193,62 @@ class TileAndBallStorage {
         }
     }
     void removeCol(int whichCol) {
-        tiles.remove(whichCol);
+        if(whichCol < tiles.size()) {
+            tiles.remove(whichCol);
+        }
     }
     void removeRow(int whichRow) {
         for (ArrayList<Tile> tile : tiles) {
-            tile.remove(whichRow);
+            if(whichRow < tile.size()) {
+                tile.remove(whichRow);
+            }
         }
     }
     void deleteRect(int startX, int startY, int endX, int endY) {
-        int a = startX;
-        do {
-            int b = startY;
-            do {
-                tiles.get(a).remove(startY);
-                b++;
-            } while (b != endY);
-            a++;
-        } while (a != endX);
+        for(int a = startX; a < endX; a++) {
+            for(int b = startY; b < endY; b++) {
+                if(a < tiles.size()) {
+                    if(startY < tiles.get(a).size()) {
+                        tiles.get(a).remove(startY);
+                    }
+                }
+            }
+        }
+    }
+    void copyRect(int startX, int startY, int endX, int endY) {
+        copy = new TileAndBallStorage(tileSize);
+        for(int a = startX; a < endX; a++) {
+            for(int b = startY; b < endY; b++) {
+                if(a < tiles.size()) {
+                    if(b < tiles.get(a).size()) {
+                        copy.placeTile(tiles.get(a).get(b).clone(tileSize), a - startX, b - startY);
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < balls.size(); i++) {
+            Ball b = balls.get(i);
+            if(b.x >= startX && b.x < endX) {
+                if(b.y >= startY && b.y < endY) {
+                    Ball ball = b.clone(tileSize);
+                    ball.x -= startX;
+                    ball.y -= startY;
+                    copy.balls.add(ball);
+                }
+            }
+        }
+    }
+    void pasteRect(int startX, int startY) {
+        for(int a = 0; a < copy.tiles.size(); a++) {
+            for(int b = 0; b < copy.tiles.get(a).size(); b++) {
+                placeTile(copy.tiles.get(a).get(b).clone(tileSize),startX+a, startY+b);
+            }
+        }
+        for(int i = 0; i < copy.balls.size(); i++) {
+            Ball b = copy.balls.get(i).clone(tileSize);
+            b.x += startX;
+            b.y += startY;
+            balls.add(b);
+        }
     }
 }

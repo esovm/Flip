@@ -5,14 +5,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
@@ -78,6 +77,7 @@ public class Flip extends Application {
         currentPlace = new Empty(Direction.NORTHSOUTHEASTWEST, tileSize);
 
         fc = new FileChooser();
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Flip program(*.f)","*.f"));
 
         primaryStage.setTitle("Flip 2.0");
         primaryStage.setWidth(width);
@@ -87,6 +87,7 @@ public class Flip extends Application {
         List<Node> children = root.getChildren();
 
         tb = new TileAndBallStorage(tileSize);
+
         so = new SelectOverlay(this, tileSize);
 
         Button load = new Button("", new ImageView(findImage("Load.png")));
@@ -180,15 +181,17 @@ public class Flip extends Application {
 
         canvas = new Canvas(width - canvasX, height - canvasY);
         canvas.relocate(canvasX, canvasY);
+        canvas.setFocusTraversable(true);
         children.add(canvas);
 
         gc = canvas.getGraphicsContext2D();
         gc.setTextAlign(TextAlignment.CENTER);
 
         Scene s = new Scene(root);
-        s.setOnMousePressed(event -> {
-            int x = ((int) event.getX() - canvasX) / tileSize;
-            int y = ((int) event.getY() - canvasY) / tileSize;
+
+        canvas.setOnMousePressed(event -> {
+            int x = ((int) event.getX()) / tileSize;
+            int y = ((int) event.getY()) / tileSize;
             if (x >= 0 && y >= 0) {
                 if (deleteHorizontal.isSelected()) {
                     tb.removeRow(y);
@@ -200,14 +203,13 @@ public class Flip extends Application {
                     so.clear();
                     System.out.println(currentPlace.getClass().getName());
                     tb.place(currentPlace.clone(tileSize), x, y);
-                    //Always is comment or empty.
                 }
             }
             draw();
         });
-        s.setOnMouseDragged(event -> {
-            int x = ((int) event.getX() - canvasX) / tileSize;
-            int y = ((int) event.getY() - canvasY) / tileSize;
+        canvas.setOnMouseDragged(event -> {
+            int x = ((int) event.getX()) / tileSize;
+            int y = ((int) event.getY()) / tileSize;
             if (x >= 0 && y >= 0) {
                 if (selectMode.isSelected() ^ event.isShiftDown()) {
                     so.drag(x, y);
@@ -219,27 +221,35 @@ public class Flip extends Application {
             }
             draw();
         });
-        s.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            String character = event.getText();
-            if(character.length() > 0) {
-                char c = character.charAt(0);
-                if(event.isControlDown()) {
-                    if(c == 'c') {
-                        so.copy();
-                    } else if( c == 'v') {
-                        so.paste();
-                    } else if(c == 'x') {
-                        so.cut();
-                    }
-                } else if (!event.isAltDown()) {
-                    if(selectMode.isSelected() ^ event.isShiftDown()) {
-                        so.fill(GraphicsObject.create(c));
-                    } else {
-                        currentPlace = GraphicsObject.create(c);
+        canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> canvas.requestFocus());
+        canvas.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.BACK_SPACE) {
+                so.delete();
+            } else if(event.getCode() == KeyCode.ENTER) {
+                tb.update();
+                draw();
+            } else {
+                System.out.println(event.getSource().getClass().getName());
+                String character = event.getText();
+                if (character.length() > 0) {
+                    char cha = character.charAt(0);
+                    if (event.isControlDown()) {
+                        if (cha == 'c') {
+                            so.copy();
+                        } else if (cha == 'v') {
+                            so.paste();
+                        } else if (cha == 'x') {
+                            so.cut();
+                        }
+                    } else if (!event.isAltDown()) {
+                        if (selectMode.isSelected() ^ event.isShiftDown()) {
+                            so.fill(GraphicsObject.create(cha));
+                        } else {
+                            currentPlace = GraphicsObject.create(cha);
+                        }
                     }
                 }
             }
-            event.consume();
         });
 
         primaryStage.setOnCloseRequest(event -> stop.fire());

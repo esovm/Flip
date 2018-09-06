@@ -32,7 +32,9 @@ abstract class GraphicsObject {
     static GraphicsObject create(char ascii) {
         GraphicsObject[] subClasses = new GraphicsObject[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0),
                 new Ball(Direction.NORTH, 0,0,0,0), new Ball(Direction.SOUTH, 0,0,0,0),
-                new Ball(Direction.EAST, 0,0,0,0), new Ball(Direction.WEST, 0,0,0,0) };
+                new Ball(Direction.EAST, 0,0,0,0), new Ball(Direction.WEST, 0,0,0,0),
+                new Sluce(Direction.NORTH,0),new Sluce(Direction.SOUTH,0),
+                new Sluce(Direction.EAST,0),new Sluce(Direction.WEST,0)};
         for (GraphicsObject sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc;
