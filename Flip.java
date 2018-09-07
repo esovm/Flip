@@ -197,11 +197,10 @@ public class Flip extends Application {
                     tb.removeRow(y);
                 } else if (deleteVertical.isSelected()) {
                     tb.removeCol(x);
-                } else if (selectMode.isSelected() ^ event.isShiftDown()) {
+                } else if (selectMode.isSelected() ^ event.isAltDown()) {
                     so.select(x, y);
                 } else {
                     so.clear();
-                    System.out.println(currentPlace.getClass().getName());
                     tb.place(currentPlace.clone(tileSize), x, y);
                 }
             }
@@ -211,11 +210,10 @@ public class Flip extends Application {
             int x = ((int) event.getX()) / tileSize;
             int y = ((int) event.getY()) / tileSize;
             if (x >= 0 && y >= 0) {
-                if (selectMode.isSelected() ^ event.isShiftDown()) {
+                if (selectMode.isSelected() ^ event.isAltDown()) {
                     so.drag(x, y);
                 } else {
                     so.clear();
-                    System.out.println(currentPlace.getClass().getName());
                     tb.place(currentPlace.clone(tileSize), x, y);
                 }
             }
@@ -228,26 +226,24 @@ public class Flip extends Application {
             } else if(event.getCode() == KeyCode.ENTER) {
                 tb.update();
                 draw();
-            } else {
-                System.out.println(event.getSource().getClass().getName());
-                String character = event.getText();
-                if (character.length() > 0) {
-                    char cha = character.charAt(0);
-                    if (event.isControlDown()) {
-                        if (cha == 'c') {
-                            so.copy();
-                        } else if (cha == 'v') {
-                            so.paste();
-                        } else if (cha == 'x') {
-                            so.cut();
-                        }
-                    } else if (!event.isAltDown()) {
-                        if (selectMode.isSelected() ^ event.isShiftDown()) {
-                            so.fill(GraphicsObject.create(cha));
-                        } else {
-                            currentPlace = GraphicsObject.create(cha);
-                        }
+            }
+        });
+        canvas.setOnKeyTyped(event -> {
+            String character = event.getCharacter();
+            if (character.length() > 0) {
+                char cha = character.charAt(0);
+                if (event.isControlDown()) {
+                    if (cha == 'c') {
+                        so.copy();
+                    } else if (cha == 'v') {
+                        so.paste();
+                    } else if (cha == 'x') {
+                        so.cut();
                     }
+                } else if (selectMode.isSelected() ^ event.isAltDown()) {
+                    so.fill(GraphicsObject.create(cha));
+                } else {
+                    currentPlace = GraphicsObject.create(cha);
                 }
             }
         });
@@ -261,6 +257,12 @@ public class Flip extends Application {
     void draw() {
         gc.setFill(Color.gray(0.25));
         gc.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
+        for(int i = 0; i < canvas.getWidth(); i += tileSize) {
+            gc.strokeLine(i,0,i,canvas.getHeight());
+        }
+        for(int i = 0; i < canvas.getHeight(); i += tileSize) {
+            gc.strokeLine(0,i,canvas.getWidth(),i);
+        }
         tb.draw(gc);
         so.draw(gc);
     }

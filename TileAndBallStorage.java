@@ -22,15 +22,14 @@ class TileAndBallStorage {
                 tiles = new ArrayList<>();
                 balls = new ArrayList<>();
                 boolean toBreak = false;
-                while (true) {
+                do {
                     ArrayList<Tile> al = new ArrayList<>();
                     while (true) {
                         int c = br.read();
-                        if(c == '\t') {
+                        if (c == '\t') {
                             toBreak = true;
                             break;
                         }
-                        System.out.println(c);
                         if (c != '\r') {
                             if (c != '\n') {
                                 al.add(Tile.create((char) c, tileSize));
@@ -40,10 +39,7 @@ class TileAndBallStorage {
                             }
                         }
                     }
-                    if(toBreak) {
-                        break;
-                    }
-                }
+                } while (!toBreak);
                 while (true) {
                     if (br.read() == '{') {
                         break;
@@ -53,16 +49,12 @@ class TileAndBallStorage {
                 do {
                     sc.useDelimiter(",");
                     int x = sc.nextInt();
-                    System.out.println(x);
                     int y = sc.nextInt();
-                    System.out.println(y);
                     int number = sc.nextInt();
-                    System.out.println(number);
                     sc.useDelimiter("}");
                     sc.skip(",");
                     String s = sc.next();
                     Direction d = Direction.getString(s);
-                    System.out.println(s);
                     balls.add(new Ball(d, x, y, tileSize, number));
                     sc.skip("}");
                     sc.skip("(])|(\\{)");
