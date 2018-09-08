@@ -16,11 +16,11 @@ abstract class GraphicsObject {
     }
 
     Image findImage() {
-        return new Image(this.getClass().getResourceAsStream("\\Icons\\"+getName()));
+        return new Image(this.getClass().getResourceAsStream("\\Icons\\" + getName()));
     }
 
 
-    void draw(GraphicsContext gc,int x, int y) {
+    void draw(GraphicsContext gc, int x, int y) {
         gc.drawImage(findImage(), x * tileSize, y * tileSize, tileSize, tileSize);
     }
 
@@ -30,17 +30,20 @@ abstract class GraphicsObject {
     }
 
     static GraphicsObject create(char ascii) {
-        GraphicsObject[] subClasses = new GraphicsObject[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0),
-                new Ball(Direction.NORTH, 0,0,0,0), new Ball(Direction.SOUTH, 0,0,0,0),
-                new Ball(Direction.EAST, 0,0,0,0), new Ball(Direction.WEST, 0,0,0,0),
-                new Sluce(Direction.NORTH,0),new Sluce(Direction.SOUTH,0),
-                new Sluce(Direction.EAST,0),new Sluce(Direction.WEST,0)};
+        GraphicsObject[] subClasses = new GraphicsObject[]{
+                new Empty(Direction.NORTHSOUTHEASTWEST, 0),
+                new Ball(Direction.NORTH, 0, 0, 0, 0), new Ball(Direction.SOUTH, 0, 0, 0, 0),
+                new Ball(Direction.EAST, 0, 0, 0, 0), new Ball(Direction.WEST, 0, 0, 0, 0),
+                new Sluce(Direction.NORTH, 0), new Sluce(Direction.SOUTH, 0),
+                new Sluce(Direction.EAST, 0), new Sluce(Direction.WEST, 0),
+                new True(Direction.NORTHSOUTHEASTWEST, 0),
+                new Flipper(Direction.NORTHSOUTH,0),new Flipper(Direction.EASTWEST,0)};
         for (GraphicsObject sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc;
             }
         }
-        return new Comment(Direction.NORTHSOUTHEASTWEST,0,ascii);
+        return new Comment(Direction.NORTHSOUTHEASTWEST, 0, ascii);
     }
 
 

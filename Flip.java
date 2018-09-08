@@ -1,12 +1,13 @@
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
-import javafx.scene.effect.Effect;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -14,6 +15,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -36,6 +39,8 @@ public class Flip extends Application {
     private File f;
     private FileChooser fc;
     private GraphicsObject currentPlace = null;
+    private int shiftX;
+    private int shiftY;
 
     public static void main(String[] args) {
         try {
@@ -66,18 +71,18 @@ public class Flip extends Application {
     }
 
     private Image findImage(String name) {
-        return new Image(this.getClass().getResourceAsStream("\\Icons\\"+name));
+        return new Image(this.getClass().getResourceAsStream("\\Icons\\" + name));
     }
 
     @Override
     public void start(Stage primaryStage) {
-        int unitX = canvasX/2;
-        int unitY = canvasY/2;
+        int unitX = canvasX / 2;
+        int unitY = canvasY / 2;
 
         currentPlace = new Empty(Direction.NORTHSOUTHEASTWEST, tileSize);
 
         fc = new FileChooser();
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Flip program(*.f)","*.f"));
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Flip program(*.f)", "*.f"));
 
         primaryStage.setTitle("Flip 2.0");
         primaryStage.setWidth(width);
@@ -91,9 +96,9 @@ public class Flip extends Application {
         so = new SelectOverlay(this, tileSize);
 
         Button load = new Button("", new ImageView(findImage("Load.png")));
-        load.setPrefWidth(unitX*2);
-        load.setPrefHeight(unitY*2);
-        load.relocate(unitX*6,0);
+        load.setPrefWidth(unitX * 2);
+        load.setPrefHeight(unitY * 2);
+        load.relocate(unitX * 6, 0);
         load.setOnAction(event -> {
             f = fc.showOpenDialog(primaryStage);
             if (f != null) {
@@ -104,33 +109,33 @@ public class Flip extends Application {
         children.add(load);
 
         Button saveAs = new Button("", new ImageView(findImage("Save.png")));
-        saveAs.setPrefWidth(unitX*2);
-        saveAs.setPrefHeight(unitY*2);
-        saveAs.relocate(unitX*8,0);
+        saveAs.setPrefWidth(unitX * 2);
+        saveAs.setPrefHeight(unitY * 2);
+        saveAs.relocate(unitX * 8, 0);
         saveAs.setOnAction(event -> {
             f = fc.showSaveDialog(primaryStage);
-            if(f != null) {
+            if (f != null) {
                 tb.write(f);
             }
         });
         children.add(saveAs);
 
         Button run = new Button("", new ImageView(findImage("Run.png")));
-        run.setPrefWidth(unitX*2);
-        run.setPrefHeight(unitY*2);
+        run.setPrefWidth(unitX * 2);
+        run.setPrefHeight(unitY * 2);
         run.setOnAction(event -> {
-            if(runClient == null) {
+            if (runClient == null) {
                 new Thread(runClient = new TimedRunClient(this, Integer.parseInt(howFast.getText()))).start();
             }
         });
         children.add(run);
 
         Button stop = new Button("", new ImageView(findImage("Stop.png")));
-        stop.setPrefWidth(unitX*2);
-        stop.setPrefHeight(unitY*2);
-        stop.relocate(unitX*2,0);
-        stop.setOnAction(event ->{
-            if(runClient != null) {
+        stop.setPrefWidth(unitX * 2);
+        stop.setPrefHeight(unitY * 2);
+        stop.relocate(unitX * 2, 0);
+        stop.setOnAction(event -> {
+            if (runClient != null) {
                 runClient.stop();
                 runClient = null;
             }
@@ -140,9 +145,9 @@ public class Flip extends Application {
         ToggleButton selectMode = new ToggleButton(""
                 //, new ImageView(findImage("Select.png"))
         );
-        selectMode.setPrefWidth(unitX*2);
-        selectMode.setPrefHeight(unitY*2);
-        selectMode.relocate(unitX*10, 0);
+        selectMode.setPrefWidth(unitX * 2);
+        selectMode.setPrefHeight(unitY * 2);
+        selectMode.relocate(unitX * 10, 0);
         children.add(selectMode);
 
         ToggleGroup horVer = new ToggleGroup();
@@ -150,33 +155,33 @@ public class Flip extends Application {
         ToggleButton deleteHorizontal = new ToggleButton(""
                 //, new ImageView(findImage("Select.png"))
         );
-        deleteHorizontal.setPrefWidth(unitX*2);
+        deleteHorizontal.setPrefWidth(unitX * 2);
         deleteHorizontal.setPrefHeight(unitY);
-        deleteHorizontal.relocate(unitX*12, 0);
+        deleteHorizontal.relocate(unitX * 12, 0);
         deleteHorizontal.setToggleGroup(horVer);
         children.add(deleteHorizontal);
 
         ToggleButton deleteVertical = new ToggleButton(""
                 //, new ImageView(findImage("Select.png"))
         );
-        deleteVertical.setPrefWidth(unitX*2);
-        deleteVertical.setPrefHeight(unitY*2);
-        deleteVertical.relocate(unitX*12, unitY);
+        deleteVertical.setPrefWidth(unitX * 2);
+        deleteVertical.setPrefHeight(unitY * 2);
+        deleteVertical.relocate(unitX * 12, unitY);
         deleteVertical.setToggleGroup(horVer);
         children.add(deleteVertical);
 
         howFast = new TextField();
         howFast.setPromptText("How fast the program should run.");
-        howFast.setPrefWidth(unitX*2);
+        howFast.setPrefWidth(unitX * 2);
         howFast.setPrefHeight(unitY);
-        howFast.relocate(unitX*4,0);
+        howFast.relocate(unitX * 4, 0);
         children.add(howFast);
 
         input = new TextField();
         input.setPromptText("Input for the program.");
-        input.setPrefWidth(unitX*2);
+        input.setPrefWidth(unitX * 2);
         input.setPrefHeight(unitY);
-        input.relocate(unitX*4,unitY);
+        input.relocate(unitX * 4, unitY);
         children.add(input);
 
         canvas = new Canvas(width - canvasX, height - canvasY);
@@ -221,32 +226,42 @@ public class Flip extends Application {
         });
         canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> canvas.requestFocus());
         canvas.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.BACK_SPACE) {
+            if (event.getCode() == KeyCode.BACK_SPACE) {
                 so.delete();
-            } else if(event.getCode() == KeyCode.ENTER) {
+            } else if (event.getCode() == KeyCode.ENTER) {
                 tb.update();
                 draw();
+            } else if (event.isControlDown()) {
+                if(event.getCode() == KeyCode.C) {
+                    so.copy();
+                } else if(event.getCode() == KeyCode.X) {
+                    so.cut();
+                } else if(event.getCode() == KeyCode.V) {
+                    so.paste();
+                } else if(event.getCode() == KeyCode.S) {
+                    if(event.isShiftDown()) {
+                        f = fc.showSaveDialog(primaryStage);
+                    }
+                    if(f != null) {
+                        tb.write(f);
+                    }
+                }
             }
         });
         canvas.setOnKeyTyped(event -> {
             String character = event.getCharacter();
             if (character.length() > 0) {
                 char cha = character.charAt(0);
-                if (event.isControlDown()) {
-                    if (cha == 'c') {
-                        so.copy();
-                    } else if (cha == 'v') {
-                        so.paste();
-                    } else if (cha == 'x') {
-                        so.cut();
+                if(!event.isControlDown()) {
+                    if (selectMode.isSelected() ^ event.isAltDown()) {
+                        so.fill(GraphicsObject.create(cha));
+                    } else {
+                        currentPlace = GraphicsObject.create(cha);
                     }
-                } else if (selectMode.isSelected() ^ event.isAltDown()) {
-                    so.fill(GraphicsObject.create(cha));
-                } else {
-                    currentPlace = GraphicsObject.create(cha);
                 }
             }
         });
+        canvas.requestFocus();
 
         primaryStage.setOnCloseRequest(event -> stop.fire());
         primaryStage.setScene(s);
@@ -256,12 +271,13 @@ public class Flip extends Application {
 
     void draw() {
         gc.setFill(Color.gray(0.25));
-        gc.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
-        for(int i = 0; i < canvas.getWidth(); i += tileSize) {
-            gc.strokeLine(i,0,i,canvas.getHeight());
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.setTransform(new Affine(new Translate(shiftX, shiftY)));
+        for (int i = 0; i < canvas.getWidth(); i += tileSize) {
+            gc.strokeLine(i, 0, i, canvas.getHeight());
         }
-        for(int i = 0; i < canvas.getHeight(); i += tileSize) {
-            gc.strokeLine(0,i,canvas.getWidth(),i);
+        for (int i = 0; i < canvas.getHeight(); i += tileSize) {
+            gc.strokeLine(0, i, canvas.getWidth(), i);
         }
         tb.draw(gc);
         so.draw(gc);

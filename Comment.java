@@ -2,6 +2,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 class Comment extends Tile {
     private char c;
+
     Comment(Direction whichDirection, int sizeTile, char whichCharacter) {
         super(whichDirection, sizeTile);
         c = whichCharacter;
@@ -24,7 +25,7 @@ class Comment extends Tile {
 
     @Override
     public Comment clone(int sizeTile) {
-        return new Comment(thisDirection, sizeTile,getAscii());
+        return new Comment(thisDirection, sizeTile, getAscii());
     }
 
     @Override
@@ -34,6 +35,6 @@ class Comment extends Tile {
 
     @Override
     void draw(GraphicsContext gc, int x, int y) {
-        gc.strokeText(""+c,x*tileSize+tileSize/2,y*tileSize+tileSize/2);
+        gc.strokeText("" + c, x * tileSize + tileSize / 2, y * tileSize + tileSize / 2);
     }
 }
