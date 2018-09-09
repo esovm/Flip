@@ -11,7 +11,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -195,8 +194,8 @@ public class Flip extends Application {
         Scene s = new Scene(root);
 
         canvas.setOnMousePressed(event -> {
-            int x = ((int) event.getX()) / tileSize;
-            int y = ((int) event.getY()) / tileSize;
+            int x = ((int) event.getX() + shiftX) / tileSize;
+            int y = ((int) event.getY() + shiftY) / tileSize;
             if (x >= 0 && y >= 0) {
                 if (deleteHorizontal.isSelected()) {
                     tb.removeRow(y);
@@ -212,8 +211,8 @@ public class Flip extends Application {
             draw();
         });
         canvas.setOnMouseDragged(event -> {
-            int x = ((int) event.getX()) / tileSize;
-            int y = ((int) event.getY()) / tileSize;
+            int x = ((int) event.getX() + shiftX) / tileSize;
+            int y = ((int) event.getY() + shiftY) / tileSize;
             if (x >= 0 && y >= 0) {
                 if (selectMode.isSelected() ^ event.isAltDown()) {
                     so.drag(x, y);
@@ -232,19 +231,39 @@ public class Flip extends Application {
                 tb.update();
                 draw();
             } else if (event.isControlDown()) {
-                if(event.getCode() == KeyCode.C) {
+                if (event.getCode() == KeyCode.C) {
                     so.copy();
-                } else if(event.getCode() == KeyCode.X) {
+                } else if (event.getCode() == KeyCode.X) {
                     so.cut();
-                } else if(event.getCode() == KeyCode.V) {
+                } else if (event.getCode() == KeyCode.V) {
                     so.paste();
-                } else if(event.getCode() == KeyCode.S) {
-                    if(event.isShiftDown()) {
+                } else if (event.getCode() == KeyCode.S) {
+                    if (event.isShiftDown()) {
                         f = fc.showSaveDialog(primaryStage);
                     }
-                    if(f != null) {
+                    if (f != null) {
                         tb.write(f);
                     }
+                } else if (event.getCode() == KeyCode.UP) {
+                    if(shiftY >= tileSize/2) {
+                        shiftY -= tileSize/2;
+                    } else {
+                        shiftY = 0;
+                    }
+                    draw();
+                } else if (event.getCode() == KeyCode.LEFT) {
+                    if(shiftX >= tileSize/2) {
+                        shiftX -= tileSize/2;
+                    } else {
+                        shiftX = 0;
+                    }
+                    draw();
+                } else if (event.getCode() == KeyCode.DOWN) {
+                    shiftY += tileSize/2;
+                    draw();
+                } else if (event.getCode() == KeyCode.RIGHT) {
+                    shiftX += tileSize/2;
+                    draw();
                 }
             }
         });
@@ -252,7 +271,7 @@ public class Flip extends Application {
             String character = event.getCharacter();
             if (character.length() > 0) {
                 char cha = character.charAt(0);
-                if(!event.isControlDown()) {
+                if (!event.isControlDown()) {
                     if (selectMode.isSelected() ^ event.isAltDown()) {
                         so.fill(GraphicsObject.create(cha));
                     } else {
@@ -272,14 +291,15 @@ public class Flip extends Application {
     void draw() {
         gc.setFill(Color.gray(0.25));
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        gc.setTransform(new Affine(new Translate(shiftX, shiftY)));
-        for (int i = 0; i < canvas.getWidth(); i += tileSize) {
-            gc.strokeLine(i, 0, i, canvas.getHeight());
+        for (int i = -tileSize; i < canvas.getWidth() + tileSize; i += tileSize) {
+            gc.strokeLine(i + (shiftX % tileSize), 0, i + (shiftX % tileSize), canvas.getHeight());
         }
-        for (int i = 0; i < canvas.getHeight(); i += tileSize) {
-            gc.strokeLine(0, i, canvas.getWidth(), i);
+        for (int i = -tileSize; i < canvas.getHeight() + tileSize; i += tileSize) {
+            gc.strokeLine(0, i + (shiftY % tileSize), canvas.getWidth(), i + (shiftY % tileSize));
         }
+        gc.setTransform(new Affine(new Translate(-shiftX, -shiftY)));
         tb.draw(gc);
         so.draw(gc);
+        gc.setTransform(new Affine());
     }
 }

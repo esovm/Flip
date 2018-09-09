@@ -10,7 +10,7 @@ public class True extends Tile {
 
     @Override
     void update(Ball b, TileAndBallStorage tb) {
-        System.err.println("Warning: The ball should not reach this tile.");
+        b.thisDirection = Direction.flip(b.thisDirection);
     }
 
     @Override

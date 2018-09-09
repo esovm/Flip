@@ -34,7 +34,7 @@ public class Flipper extends Tile {
             whichDirection = new Point(1,-1);
         }
         if(tb.getTileAtPos(whichDirection.x + b.x, whichDirection.y + b.y).getModifier(b) ^ tb.getTileAtPos(-whichDirection.x + b.x, -whichDirection.y + b.y).getModifier(b)) {
-            tb.place(new Flipper(Direction.rotateLeft(thisDirection),tileSize),b.x, b.y);
+            tb.place(new Flipper(Direction.flip(thisDirection),tileSize),b.x, b.y);
         }
     }
 
