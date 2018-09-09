@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 abstract class GraphicsObject {
     Direction thisDirection;
     int tileSize;
+    Image img;
 
     abstract String getName();
 
@@ -21,12 +22,13 @@ abstract class GraphicsObject {
 
 
     void draw(GraphicsContext gc, int x, int y) {
-        gc.drawImage(findImage(), x * tileSize, y * tileSize, tileSize, tileSize);
+        gc.drawImage(img, x * tileSize, y * tileSize, tileSize, tileSize);
     }
 
     GraphicsObject(Direction whichDirection, int sizeTile) {
         thisDirection = whichDirection;
         tileSize = sizeTile;
+        img = findImage();
     }
 
     static GraphicsObject create(char ascii) {
@@ -38,7 +40,13 @@ abstract class GraphicsObject {
                 new Sluce(Direction.EAST, 0), new Sluce(Direction.WEST, 0),
                 new True(Direction.NORTHSOUTHEASTWEST, 0),
                 new Flipper(Direction.NORTHSOUTH,0),new Flipper(Direction.EASTWEST,0),
-                new Wall(Direction.NORTHSOUTH,0), new Wall(Direction.EASTWEST, 0)};
+                new Wall(Direction.NORTHSOUTH,0), new Wall(Direction.EASTWEST, 0),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 0), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 1),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 2), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 3),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 4), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 5),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 6), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 7),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 8), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 9),
+                new Tarpit(Direction.NORTHSOUTHEASTWEST, 0, true), new Tarpit(Direction.NORTHSOUTHEASTWEST, 0, false)};
         for (GraphicsObject sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc;

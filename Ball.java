@@ -12,16 +12,16 @@ class Ball extends GraphicsObject {
     @Override
     char getAscii() {
         if (thisDirection == Direction.NORTH) {
-            return '8';
+            return 'w';
         }
         if (thisDirection == Direction.SOUTH) {
-            return '2';
+            return 's';
         }
         if (thisDirection == Direction.EAST) {
-            return '6';
+            return 'd';
         }
         if (thisDirection == Direction.WEST) {
-            return '4';
+            return 'a';
         }
         return ' ';
     }

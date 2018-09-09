@@ -153,9 +153,23 @@ class TileAndBallStorage {
     }
 
     synchronized void update() {
-        for (Ball ball : balls) {
+        ArrayList<Ball> ballsTemp = new ArrayList<>();
+        for(Ball ball : balls) {
+            ballsTemp.add(ball);
+        }
+        for (Ball ball : ballsTemp) {
             ball.update(this);
         }
+    }
+
+    void removeExactBall(Ball b) {
+        int toRemove = 0;
+        for(int i = 0; i < balls.size(); i++) {
+            if(balls.get(i) == b) {
+                toRemove = i;
+            }
+        }
+        balls.remove(toRemove);
     }
 
     void place(GraphicsObject go, int x, int y) {

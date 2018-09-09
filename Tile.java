@@ -38,7 +38,13 @@ abstract class Tile extends GraphicsObject{
                 new Sluce(Direction.EAST, 0), new Sluce(Direction.WEST, 0),
                 new True(Direction.NORTHSOUTHEASTWEST, 0),
                 new Flipper(Direction.NORTHSOUTH,0), new Flipper(Direction.EASTWEST,0),
-                new Wall(Direction.NORTHSOUTH,0), new Wall(Direction.EASTWEST, 0)};
+                new Wall(Direction.NORTHSOUTH,0), new Wall(Direction.EASTWEST, 0),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 0), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 1),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 2), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 3),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 4), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 5),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 6), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 7),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 8), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 9),
+                new Tarpit(Direction.NORTHSOUTHEASTWEST, 0, true), new Tarpit(Direction.NORTHSOUTHEASTWEST, 0, false)};
         for (Tile sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc.clone(sizeTile);
