@@ -50,10 +50,6 @@ public class Sluce extends Tile {
         return new Sluce(thisDirection, sizeTile);
     }
 
-    static Direction[] getAllowedDirections() {
-        return new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
-    }
-
     @Override
     char getAscii() {
         if (thisDirection == Direction.NORTH) {

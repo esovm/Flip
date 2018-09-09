@@ -63,10 +63,6 @@ class Ball extends GraphicsObject {
         throw new Error("Warning: This ball is not facing north or south or east or west");
     }
 
-    static Direction[] getAllowedDirections() {
-        return new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
-    }
-
     Ball(Direction whichDirection, int posX, int posY, int sizeTile, int thisNumber) {
         super(whichDirection, sizeTile);
         x = posX;
