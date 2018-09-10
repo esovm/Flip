@@ -5,7 +5,7 @@ public class UnaryNegate extends Tile {
 
     @Override
     boolean getModifier(Ball b) {
-        return false;
+        return (b.number&1)==1;
     }
 
     @Override

@@ -1,13 +1,13 @@
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 
 public class PrintNum extends Tile {
-    private TextField toPrint;
+    private TextArea toPrint;
 
     PrintNum(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
     }
 
-    void setTextField(TextField tf) {
+    void setTextArea(TextArea tf) {
         toPrint = tf;
     }
 
@@ -30,7 +30,7 @@ public class PrintNum extends Tile {
     @Override
     public Tile clone(int sizeTile) {
         PrintNum p = new PrintNum(thisDirection, sizeTile);
-        p.setTextField(toPrint);
+        p.setTextArea(toPrint);
         return p;
     }
 

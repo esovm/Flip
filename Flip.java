@@ -4,10 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -132,12 +129,7 @@ public class Flip extends Application {
         stop.setPrefWidth(unitX * 2);
         stop.setPrefHeight(unitY * 2);
         stop.relocate(unitX * 2, 0);
-        stop.setOnAction(event -> {
-            if (runClient != null) {
-                runClient.stop();
-                runClient = null;
-            }
-        });
+        stop.setOnAction(event -> stopRunning());
         children.add(stop);
 
         ToggleButton selectMode = new ToggleButton(""
@@ -178,15 +170,15 @@ public class Flip extends Application {
         TextField input = new TextField();
         input.setPromptText("Input for the program.");
         input.setPrefWidth(unitX * 2);
-        input.setPrefHeight(unitY);
+        input.setPrefHeight(unitY*2);
         input.relocate(unitX * 14, 0);
         children.add(input);
 
-        TextField output = new TextField();
+        TextArea output = new TextArea();
         output.setPromptText("Output for the program.");
-        output.setPrefWidth(unitX * 2);
-        output.setPrefHeight(unitY);
-        output.relocate(unitX * 14, unitY);
+        output.setPrefWidth(unitX*2);
+        output.setPrefHeight(height-canvasX);
+        output.relocate(0, unitY*2);
         children.add(output);
 
         Button clear = new Button(""
@@ -195,11 +187,8 @@ public class Flip extends Application {
         clear.setPrefWidth(unitX);
         clear.setPrefHeight(unitY * 2);
         clear.relocate(unitX * 16, 0);
-        clear.setOnAction(event -> {
-            output.setText("");
-        });
+        clear.setOnAction(event -> output.setText(""));
         children.add(clear);
-
 
         canvas = new Canvas(width - canvasX, height - canvasY);
         canvas.relocate(canvasX, canvasY);
@@ -293,11 +282,16 @@ public class Flip extends Application {
                 char cha = character.charAt(0);
                 if (!event.isControlDown()) {
                     currentPlace = GraphicsObject.create(cha);
+                    if(currentPlace instanceof ControlTerm) {
+                        ControlTerm ct = (ControlTerm) currentPlace;
+                        ct.setTextArea(output);
+                        ct.setFlip(this);
+                    }
                     if(currentPlace instanceof PrintNum) {
-                        ((PrintNum) currentPlace).setTextField(output);
+                        ((PrintNum) currentPlace).setTextArea(output);
                     }
                     if(currentPlace instanceof PrintAscii) {
-                        ((PrintAscii) currentPlace).setTextField(output);
+                        ((PrintAscii) currentPlace).setTextArea(output);
                     }
                     if(currentPlace instanceof ReadNum) {
                         ((ReadNum) currentPlace).setTextField(input);
@@ -317,6 +311,13 @@ public class Flip extends Application {
         primaryStage.setScene(s);
         primaryStage.show();
         draw();
+    }
+
+    void stopRunning() {
+        if(runClient != null) {
+            runClient.stop();
+            runClient = null;
+        }
     }
 
     void draw() {
