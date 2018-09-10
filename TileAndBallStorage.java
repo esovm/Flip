@@ -9,6 +9,7 @@ class TileAndBallStorage {
     private ArrayList<Ball> balls;
     private int tileSize;
     private TileAndBallStorage copy = null;
+    private boolean isSuspended = false;
 
     TileAndBallStorage(int sizeTile) {
         tiles = new ArrayList<>();
@@ -16,6 +17,13 @@ class TileAndBallStorage {
         tileSize = sizeTile;
     }
 
+    void suspend() {
+        isSuspended = true;
+    }
+
+    void resume() {
+        isSuspended = false;
+    }
 
     void read(File f) {
         swap();
@@ -71,7 +79,7 @@ class TileAndBallStorage {
         removeEmpty();
     }
 
-    void swap() {
+    private void swap() {
         ArrayList<ArrayList<Tile>> oldTiles = tiles;
         tiles = new ArrayList<>();
         for(int a = 0; a < oldTiles.size(); a++) {
@@ -81,8 +89,7 @@ class TileAndBallStorage {
         }
         ArrayList<Ball> oldBalls = balls;
         balls = new ArrayList<>();
-        for(int i = 0; i < oldBalls.size(); i++) {
-            Ball b = oldBalls.get(i);
+        for (Ball b : oldBalls) {
             int temp = b.x;
             b.x = b.y;
             b.y = temp;
@@ -153,12 +160,12 @@ class TileAndBallStorage {
     }
 
     synchronized void update() {
-        ArrayList<Ball> ballsTemp = new ArrayList<>();
-        for(Ball ball : balls) {
-            ballsTemp.add(ball);
-        }
-        for (Ball ball : ballsTemp) {
-            ball.update(this);
+        if(!isSuspended) {
+            ArrayList<Ball> ballsTemp = new ArrayList<>();
+            ballsTemp.addAll(balls);
+            for (Ball ball : ballsTemp) {
+                ball.update(this);
+            }
         }
     }
 

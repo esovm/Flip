@@ -33,7 +33,6 @@ public class Flip extends Application {
     private Canvas canvas;
     private SelectOverlay so;
     private TextField howFast;
-    private TextField input;
     private RunClient runClient = null;
     private File f;
     private FileChooser fc;
@@ -152,7 +151,7 @@ public class Flip extends Application {
         ToggleGroup horVer = new ToggleGroup();
 
         ToggleButton deleteHorizontal = new ToggleButton(""
-                //, new ImageView(findImage("Select.png"))
+                //, new ImageView(findImage("SelectHor.png"))
         );
         deleteHorizontal.setPrefWidth(unitX * 2);
         deleteHorizontal.setPrefHeight(unitY);
@@ -161,7 +160,7 @@ public class Flip extends Application {
         children.add(deleteHorizontal);
 
         ToggleButton deleteVertical = new ToggleButton(""
-                //, new ImageView(findImage("Select.png"))
+                //, new ImageView(findImage("SelectVer.png"))
         );
         deleteVertical.setPrefWidth(unitX * 2);
         deleteVertical.setPrefHeight(unitY * 2);
@@ -172,16 +171,35 @@ public class Flip extends Application {
         howFast = new TextField();
         howFast.setPromptText("How fast the program should run.");
         howFast.setPrefWidth(unitX * 2);
-        howFast.setPrefHeight(unitY);
+        howFast.setPrefHeight(unitY * 2);
         howFast.relocate(unitX * 4, 0);
         children.add(howFast);
 
-        input = new TextField();
+        TextField input = new TextField();
         input.setPromptText("Input for the program.");
         input.setPrefWidth(unitX * 2);
         input.setPrefHeight(unitY);
-        input.relocate(unitX * 4, unitY);
+        input.relocate(unitX * 14, 0);
         children.add(input);
+
+        TextField output = new TextField();
+        output.setPromptText("Output for the program.");
+        output.setPrefWidth(unitX * 2);
+        output.setPrefHeight(unitY);
+        output.relocate(unitX * 14, unitY);
+        children.add(output);
+
+        Button clear = new Button(""
+                //, new ImageView(findImage("Clear.png"))
+        );
+        clear.setPrefWidth(unitX);
+        clear.setPrefHeight(unitY * 2);
+        clear.relocate(unitX * 16, 0);
+        clear.setOnAction(event -> {
+            output.setText("");
+        });
+        children.add(clear);
+
 
         canvas = new Canvas(width - canvasX, height - canvasY);
         canvas.relocate(canvasX, canvasY);
@@ -274,10 +292,15 @@ public class Flip extends Application {
             if (character.length() > 0) {
                 char cha = character.charAt(0);
                 if (!event.isControlDown()) {
+                    currentPlace = GraphicsObject.create(cha);
+                    if(currentPlace instanceof PrintNum) {
+                        ((PrintNum) currentPlace).setTextField(output);
+                    }
+                    if(currentPlace instanceof PrintAscii) {
+                        ((PrintAscii) currentPlace).setTextField(output);
+                    }
                     if (selectMode.isSelected() ^ event.isAltDown()) {
                         so.fill(GraphicsObject.create(cha));
-                    } else {
-                        currentPlace = GraphicsObject.create(cha);
                     }
                 }
             }

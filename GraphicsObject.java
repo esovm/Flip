@@ -44,7 +44,8 @@ abstract class GraphicsObject {
                 new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 8), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 9),
                 new TarpitAdd(Direction.NORTHSOUTHEASTWEST, 0), new TarpitMult(Direction.NORTHSOUTHEASTWEST, 0),
                 new UnaryNegate(Direction.NORTHSOUTHEASTWEST, 0), new UnaryReset(Direction.NORTHSOUTHEASTWEST, 0),
-                new UnaryDecrement(Direction.NORTHSOUTHEASTWEST, 0), new UnaryIncrement(Direction.NORTHSOUTHEASTWEST, 0)};
+                new UnaryDecrement(Direction.NORTHSOUTHEASTWEST, 0), new UnaryIncrement(Direction.NORTHSOUTHEASTWEST, 0),
+                new PrintNum(Direction.NORTHSOUTHEASTWEST, 0), new PrintAscii(Direction.NORTHSOUTHEASTWEST, 0)};
         for (GraphicsObject sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc;
