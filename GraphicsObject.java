@@ -46,7 +46,7 @@ abstract class GraphicsObject {
                 new UnaryNegate(Direction.NORTHSOUTHEASTWEST, 0), new UnaryReset(Direction.NORTHSOUTHEASTWEST, 0),
                 new UnaryDecrement(Direction.NORTHSOUTHEASTWEST, 0), new UnaryIncrement(Direction.NORTHSOUTHEASTWEST, 0),
                 new PrintNum(Direction.NORTHSOUTHEASTWEST, 0), new PrintAscii(Direction.NORTHSOUTHEASTWEST, 0),
-                new ReadNum(Direction.NORTHSOUTHEASTWEST, 0)};
+                new ReadNum(Direction.NORTHSOUTHEASTWEST, 0), new ReadAscii(Direction.NORTHSOUTHEASTWEST,0)};
         for (GraphicsObject sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc;

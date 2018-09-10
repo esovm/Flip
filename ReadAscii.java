@@ -4,23 +4,20 @@ import javafx.scene.input.KeyEvent;
 
 import java.util.Scanner;
 
-public class ReadNum extends Tile {
+public class ReadAscii extends Tile {
     private TextField toRead;
     private Ball ball;
     private TileAndBallStorage tileBall;
 
 
-    ReadNum(Direction whichDirection, int sizeTile) {
+    ReadAscii(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
     }
 
     void setTextField(TextField tf) {
         toRead = tf;
         toRead.addEventHandler(KeyEvent.KEY_TYPED, event -> {
-            char c = event.getCharacter().charAt(0);
-            if(c == ' ') {
-                handle();
-            }
+            handle();
         });
     }
 
@@ -48,7 +45,7 @@ public class ReadNum extends Tile {
 
     @Override
     String getName() {
-        return "ReadNum.png";
+        return "ReadAscii.png";
     }
 
     @Override
@@ -61,22 +58,21 @@ public class ReadNum extends Tile {
 
     @Override
     public Tile clone(int sizeTile) {
-        ReadNum r = new ReadNum(thisDirection, sizeTile);
+        ReadAscii r = new ReadAscii(thisDirection, sizeTile);
         r.setTextField(toRead);
         return r;
     }
 
     @Override
     char getAscii() {
-        return 'r';
+        return 'R';
     }
 
     private synchronized void handle() {
         if(ball != null) {
             String s = toRead.getText();
-            Scanner sc = new Scanner(s);
-            ball.number = sc.nextInt();
-            toRead.setText(s.substring(Integer.toString(ball.number).length() + 1));
+            ball.number = s.charAt(0);
+            toRead.setText(s.substring(1));
             tileBall.resume();
             tileBall.place(ball, ball.x, ball.y);
             ball = null;

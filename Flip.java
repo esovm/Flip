@@ -302,6 +302,9 @@ public class Flip extends Application {
                     if(currentPlace instanceof ReadNum) {
                         ((ReadNum) currentPlace).setTextField(input);
                     }
+                    if(currentPlace instanceof ReadAscii) {
+                        ((ReadAscii) currentPlace).setTextField(input);
+                    }
                     if (selectMode.isSelected() ^ event.isAltDown()) {
                         so.fill(GraphicsObject.create(cha));
                     }
