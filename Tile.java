@@ -44,7 +44,7 @@ abstract class Tile extends GraphicsObject{
                 new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 4), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 5),
                 new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 6), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 7),
                 new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 8), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 9),
-                new Tarpit(Direction.NORTHSOUTHEASTWEST, 0, true), new Tarpit(Direction.NORTHSOUTHEASTWEST, 0, false)};
+                new TarpitAdd(Direction.NORTHSOUTHEASTWEST, 0), new TarpitMult(Direction.NORTHSOUTHEASTWEST, 0)};
         for (Tile sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc.clone(sizeTile);

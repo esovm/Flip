@@ -219,6 +219,7 @@ public class Flip extends Application {
                     so.drag(x, y);
                 } else {
                     so.clear();
+                    tb.remove(x,y);
                     tb.place(currentPlace.clone(tileSize), x, y);
                 }
             }

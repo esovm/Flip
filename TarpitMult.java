@@ -1,13 +1,10 @@
 import java.util.OptionalInt;
 
-public class Tarpit extends Tile {
-    boolean mult;
+public class TarpitMult extends Tile {
     OptionalInt i;
-    Tarpit(Direction whichDirection, int sizeTile, boolean multiply) {
+    TarpitMult(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
-        mult = multiply;
         i = OptionalInt.empty();
-        img = findImage();
     }
 
     @Override
@@ -18,11 +15,7 @@ public class Tarpit extends Tile {
     @Override
     void update(Ball b, TileAndBallStorage tb) {
         if(i.isPresent()) {
-            if(mult) {
-                b.number *= i.getAsInt();
-            } else {
-                b.number += i.getAsInt();
-            }
+            b.number *= i.getAsInt();
             i = OptionalInt.empty();
         } else {
             i = OptionalInt.of(b.number);
@@ -32,24 +25,16 @@ public class Tarpit extends Tile {
 
     @Override
     String getName() {
-        if(mult) {
-            return "TarpitMult.png";
-        } else {
-            return "TarpitAdd.png";
-        }
+        return "TarpitMult.png";
     }
 
     @Override
     public Tile clone(int sizeTile) {
-        return new Tarpit(thisDirection, sizeTile, mult);
+        return new TarpitMult(thisDirection, sizeTile);
     }
 
     @Override
     char getAscii() {
-        if(mult) {
-            return '*';
-        } else {
-            return '+';
-        }
+        return '*';
     }
 }
