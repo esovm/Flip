@@ -12,10 +12,6 @@ abstract class GraphicsObject {
 
     abstract char getAscii();
 
-    static Direction[] getAllowedDirections() {
-        return new Direction[0];
-    }
-
     Image findImage() {
         return new Image(this.getClass().getResourceAsStream("\\Icons\\" + getName()));
     }

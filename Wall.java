@@ -5,7 +5,11 @@ public class Wall extends Tile {
 
     @Override
     boolean getModifier(Ball b) {
-        return false;
+        if(thisDirection == Direction.EASTWEST) {
+            return b.number < 0;
+        } else {
+            return false;
+        }
     }
 
     @Override

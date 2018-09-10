@@ -72,7 +72,7 @@ class SelectOverlay {
         end = new Point(-1, -1);
     }
 
-    void erase() {
+    private void erase() {
         Point s = arrangeStart();
         Point e = arrangeEnd();
         flip.tb.removeRect(s.x, s.y, e.x, e.y);
@@ -85,7 +85,7 @@ class SelectOverlay {
         flip.draw();
     }
 
-    Point arrangeStart() {
+    private Point arrangeStart() {
         int startX = start.x;
         int startY = start.y;
         int endX = end.x;
@@ -99,7 +99,9 @@ class SelectOverlay {
         return new Point(startX, startY);
     }
 
-    Point arrangeEnd() {
+
+
+    private Point arrangeEnd() {
         int startX = start.x;
         int startY = start.y;
         int endX = end.x;

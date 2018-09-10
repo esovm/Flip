@@ -1,10 +1,9 @@
-import java.util.OptionalInt;
+import javafx.scene.canvas.GraphicsContext;
 
 public class TarpitAdd extends Tile {
-    OptionalInt i;
+    private Ball ball;
     TarpitAdd(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
-        i = OptionalInt.empty();
     }
 
     @Override
@@ -14,11 +13,11 @@ public class TarpitAdd extends Tile {
 
     @Override
     void update(Ball b, TileAndBallStorage tb) {
-        if(i.isPresent()) {
-            b.number += i.getAsInt();
-            i = OptionalInt.empty();
+        if(ball != null) {
+            b.number += ball.number;
+            ball = null;
         } else {
-            i = OptionalInt.of(b.number);
+            ball = b;
             tb.removeExactBall(b);
         }
     }
@@ -36,5 +35,11 @@ public class TarpitAdd extends Tile {
     @Override
     char getAscii() {
         return '+';
+    }
+
+    @Override
+    void draw(GraphicsContext gc, int x, int y) {
+        super.draw(gc, x, y);
+        ball.draw(gc);
     }
 }
