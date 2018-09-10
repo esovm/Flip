@@ -1,10 +1,14 @@
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 
 import java.util.Scanner;
 
 public class ReadNum extends Tile {
     private TextField toRead;
     private Ball ball;
+    private TileAndBallStorage tileBall;
+
 
     ReadNum(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
@@ -12,6 +16,12 @@ public class ReadNum extends Tile {
 
     void setTextField(TextField tf) {
         toRead = tf;
+        toRead.addEventHandler(KeyEvent.KEY_TYPED, event -> {
+            char c = event.getCharacter().charAt(0);
+            if(c == ' ') {
+                handle();
+            }
+        });
     }
 
     @Override
@@ -19,43 +29,20 @@ public class ReadNum extends Tile {
         return false;
     }
 
-    boolean hasBall() {
-        return ball != null;
-    }
-
     @Override
     void update(Ball b, TileAndBallStorage tb) {
+        ball = b;
+        tileBall = tb;
+        tb.removeExactBall(b);
         String s = toRead.getText();
         if(s.equals("")) {
-            if(b.number > 0) {
-                ball = b;
-                tb.removeExactBall(b);
-            } else if(b.number < 0) {
+            if(b.number < 0) {
                 tb.suspend();
-                while(true) {
-                    try {
-                        Thread.sleep(20);
-                    } catch(InterruptedException e) {
-                        System.err.println("Warning: Thread interrupted.");
-                        e.printStackTrace();
-                    }
-                    if(tb.getTileAtPos(b.x, b.y) == this) {
-                        if(s.contains(" ")) {
-                            update(b,tb);
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                }
-                tb.resume();
-            } else {
-                tb.removeExactBall(b);
+            } else if(b.number == 0) {
+                ball = null;
             }
         } else {
-            Scanner sc = new Scanner(s);
-            b.number = sc.nextInt();
-            s.substring(Integer.toString(b.number).length());
+            handle();
         }
     }
 
@@ -65,14 +52,35 @@ public class ReadNum extends Tile {
     }
 
     @Override
+    void draw(GraphicsContext gc, int x, int y) {
+        super.draw(gc, x, y);
+        if(ball != null) {
+            ball.draw(gc);
+        }
+    }
+
+    @Override
     public Tile clone(int sizeTile) {
-        ReadNum p = new ReadNum(thisDirection, sizeTile);
-        p.setTextField(toRead);
-        return p;
+        ReadNum r = new ReadNum(thisDirection, sizeTile);
+        r.setTextField(toRead);
+        return r;
     }
 
     @Override
     char getAscii() {
-        return 'p';
+        return 'r';
+    }
+
+    synchronized void handle() {
+        if(ball != null) {
+            String s = toRead.getText();
+            Scanner sc = new Scanner(s);
+            ball.number = sc.nextInt();
+            toRead.setText(s.substring(Integer.toString(ball.number).length() + 1));
+            tileBall.resume();
+            tileBall.place(ball, ball.x, ball.y);
+            ball = null;
+            tileBall = null;
+        }
     }
 }
