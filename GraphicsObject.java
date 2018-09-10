@@ -34,7 +34,7 @@ abstract class GraphicsObject {
                 new Ball(Direction.EAST, 0, 0, 0, 0), new Ball(Direction.WEST, 0, 0, 0, 0),
                 new Sluce(Direction.NORTH, 0), new Sluce(Direction.SOUTH, 0),
                 new Sluce(Direction.EAST, 0), new Sluce(Direction.WEST, 0),
-                new True(Direction.NORTHSOUTHEASTWEST, 0),
+                new True(Direction.NORTHSOUTHEASTWEST, 0), new Random(Direction.NORTHSOUTHEASTWEST, 0),
                 new Flipper(Direction.NORTHSOUTH,0),new Flipper(Direction.EASTWEST,0),
                 new Wall(Direction.NORTHSOUTH,0), new Wall(Direction.EASTWEST, 0),
                 new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 0), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 1),

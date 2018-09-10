@@ -43,6 +43,7 @@ class Ball extends GraphicsObject {
         if (thisDirection == Direction.WEST) {
             x--;
         }
+        Random.random = Math.random() > 0.5;
         tb.getTileAtPos(x, y).update(this, tb);
     }
 
