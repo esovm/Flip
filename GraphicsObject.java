@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 abstract class GraphicsObject {
     Direction thisDirection;
     int tileSize;
-    Image img;
+    private Image img;
 
     abstract String getName();
 
@@ -47,7 +47,8 @@ abstract class GraphicsObject {
                 new UnaryDecrement(Direction.NORTHSOUTHEASTWEST, 0), new UnaryIncrement(Direction.NORTHSOUTHEASTWEST, 0),
                 new PrintNum(Direction.NORTHSOUTHEASTWEST, 0), new PrintAscii(Direction.NORTHSOUTHEASTWEST, 0),
                 new ReadNum(Direction.NORTHSOUTHEASTWEST, 0), new ReadAscii(Direction.NORTHSOUTHEASTWEST,0),
-                new ControlTerm(Direction.NORTHSOUTHEASTWEST, 0)};
+                new ControlTerm(Direction.NORTHSOUTHEASTWEST, 0), new CtrlGrille(Direction.NORTHSOUTHEASTWEST, 0),
+                new Processor(Direction.NORTHSOUTHEASTWEST, 0)};
         for (GraphicsObject sc : subClasses) {
             if (sc.getAscii() == ascii) {
                 return sc;

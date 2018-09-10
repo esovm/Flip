@@ -132,9 +132,7 @@ public class Flip extends Application {
         stop.setOnAction(event -> stopRunning());
         children.add(stop);
 
-        ToggleButton selectMode = new ToggleButton(""
-                //, new ImageView(findImage("Select.png"))
-        );
+        ToggleButton selectMode = new ToggleButton("", new ImageView(findImage("Select.png")));
         selectMode.setPrefWidth(unitX * 2);
         selectMode.setPrefHeight(unitY * 2);
         selectMode.relocate(unitX * 10, 0);
@@ -142,20 +140,16 @@ public class Flip extends Application {
 
         ToggleGroup horVer = new ToggleGroup();
 
-        ToggleButton deleteHorizontal = new ToggleButton(""
-                //, new ImageView(findImage("SelectHor.png"))
-        );
+        ToggleButton deleteHorizontal = new ToggleButton("", new ImageView(findImage("SelectHor.png")));
         deleteHorizontal.setPrefWidth(unitX * 2);
         deleteHorizontal.setPrefHeight(unitY);
         deleteHorizontal.relocate(unitX * 12, 0);
         deleteHorizontal.setToggleGroup(horVer);
         children.add(deleteHorizontal);
 
-        ToggleButton deleteVertical = new ToggleButton(""
-                //, new ImageView(findImage("SelectVer.png"))
-        );
+        ToggleButton deleteVertical = new ToggleButton("", new ImageView(findImage("SelectVer.png")));
         deleteVertical.setPrefWidth(unitX * 2);
-        deleteVertical.setPrefHeight(unitY * 2);
+        deleteVertical.setPrefHeight(unitY);
         deleteVertical.relocate(unitX * 12, unitY);
         deleteVertical.setToggleGroup(horVer);
         children.add(deleteVertical);
@@ -181,9 +175,7 @@ public class Flip extends Application {
         output.relocate(0, unitY*2);
         children.add(output);
 
-        Button clear = new Button(""
-                //, new ImageView(findImage("Clear.png"))
-        );
+        Button clear = new Button("", new ImageView(findImage("Clear.png")));
         clear.setPrefWidth(unitX);
         clear.setPrefHeight(unitY * 2);
         clear.relocate(unitX * 16, 0);
