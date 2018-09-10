@@ -40,6 +40,8 @@ public class TarpitMult extends Tile {
     @Override
     void draw(GraphicsContext gc, int x, int y) {
         super.draw(gc, x, y);
-        ball.draw(gc);
+        if(ball != null) {
+            ball.draw(gc);
+        }
     }
 }

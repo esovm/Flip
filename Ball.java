@@ -25,7 +25,7 @@ class Ball extends GraphicsObject {
         }
         return ' ';
     }
-    
+
     void draw(GraphicsContext gc) {
         gc.drawImage(findImage(), x * tileSize, y * tileSize, tileSize, tileSize);
     }
