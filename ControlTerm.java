@@ -1,8 +1,6 @@
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-
 public class ControlTerm extends Tile {
-    TextArea ta;
+    TextArea ta = Flip.output;
     Flip f;
 
     ControlTerm(Direction whichDirection, int sizeTile) {
@@ -12,10 +10,6 @@ public class ControlTerm extends Tile {
     @Override
     boolean getModifier(Ball b) {
         return false;
-    }
-
-    void setTextArea(TextArea exitPos) {
-        ta = exitPos;
     }
 
     void setFlip(Flip flip) {
@@ -37,7 +31,6 @@ public class ControlTerm extends Tile {
     @Override
     public Tile clone(int sizeTile) {
         ControlTerm q = new ControlTerm(thisDirection, sizeTile);
-        q.setTextArea(ta);
         q.setFlip(f);
         return q;
     }

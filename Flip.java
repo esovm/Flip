@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Translate;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.util.List;
 
 public class Flip extends Application {
+    private static final String whichFont = "Monospace.ttf";
     private static int width = 1800;
     private static int height = 900;
     private static int canvasX = 200;
@@ -34,6 +36,8 @@ public class Flip extends Application {
     private File f;
     private FileChooser fc;
     private GraphicsObject currentPlace = null;
+    static TextField input;
+    static TextArea output;
     private int shiftX;
     private int shiftY;
 
@@ -69,6 +73,10 @@ public class Flip extends Application {
         return new Image(this.getClass().getResourceAsStream("\\Icons\\" + name));
     }
 
+    private Font findFont(String name, int size) {
+        return Font.loadFont(this.getClass().getResourceAsStream("\\Fonts\\" + name), size);
+    }
+
     @Override
     public void start(Stage primaryStage) {
         int unitX = canvasX / 2;
@@ -79,7 +87,7 @@ public class Flip extends Application {
         fc = new FileChooser();
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Flip program(*.f)", "*.f"));
 
-        primaryStage.setTitle("Flip 2.0");
+        primaryStage.setTitle("Flip");
         primaryStage.setWidth(width);
         primaryStage.setHeight(height);
 
@@ -97,7 +105,7 @@ public class Flip extends Application {
         load.setOnAction(event -> {
             f = fc.showOpenDialog(primaryStage);
             if (f != null) {
-                tb.read(f);
+                tb.read(f, this);
                 draw();
             }
         });
@@ -161,18 +169,20 @@ public class Flip extends Application {
         howFast.relocate(unitX * 4, 0);
         children.add(howFast);
 
-        TextField input = new TextField();
+        input = new TextField();
         input.setPromptText("Input for the program.");
         input.setPrefWidth(unitX * 2);
         input.setPrefHeight(unitY*2);
         input.relocate(unitX * 14, 0);
         children.add(input);
 
-        TextArea output = new TextArea();
+        output = new TextArea();
         output.setPromptText("Output for the program.");
         output.setPrefWidth(unitX*2);
         output.setPrefHeight(height-canvasX);
         output.relocate(0, unitY*2);
+        output.setWrapText(false);
+        output.setFont(findFont(whichFont, 12));
         children.add(output);
 
         Button clear = new Button("", new ImageView(findImage("Clear.png")));
@@ -275,21 +285,7 @@ public class Flip extends Application {
                 if (!event.isControlDown()) {
                     currentPlace = GraphicsObject.create(cha);
                     if(currentPlace instanceof ControlTerm) {
-                        ControlTerm ct = (ControlTerm) currentPlace;
-                        ct.setTextArea(output);
-                        ct.setFlip(this);
-                    }
-                    if(currentPlace instanceof PrintNum) {
-                        ((PrintNum) currentPlace).setTextArea(output);
-                    }
-                    if(currentPlace instanceof PrintAscii) {
-                        ((PrintAscii) currentPlace).setTextArea(output);
-                    }
-                    if(currentPlace instanceof ReadNum) {
-                        ((ReadNum) currentPlace).setTextField(input);
-                    }
-                    if(currentPlace instanceof ReadAscii) {
-                        ((ReadAscii) currentPlace).setTextField(input);
+                        ((ControlTerm) currentPlace).setFlip(this);
                     }
                     if (selectMode.isSelected() ^ event.isAltDown()) {
                         so.fill(GraphicsObject.create(cha));
@@ -298,6 +294,9 @@ public class Flip extends Application {
             }
         });
         canvas.requestFocus();
+
+        Tile.init();
+        GraphicsObject.init();
 
         primaryStage.setOnCloseRequest(event -> stop.fire());
         primaryStage.setScene(s);

@@ -15,10 +15,10 @@ public class Sluce extends Tile {
             boolean right = getModifierToRight(b, tb, thisDirection);
             if (left ^ right) {
                 if (left) {
-                    b.thisDirection = Direction.rotateLeft(b.thisDirection);
+                    b.thisDirection = Direction.rotateRight(b.thisDirection);
                 }
                 if (right) {
-                    b.thisDirection = Direction.rotateRight(b.thisDirection);
+                    b.thisDirection = Direction.rotateLeft(b.thisDirection);
                 }
             } else {
                 b.thisDirection = thisDirection;

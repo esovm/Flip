@@ -5,17 +5,13 @@ import javafx.scene.input.KeyEvent;
 import java.util.Scanner;
 
 public class ReadNum extends Tile {
-    private TextField toRead;
+    private TextField toRead = Flip.input;
     private Ball ball;
     private TileAndBallStorage tileBall;
 
 
     ReadNum(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
-    }
-
-    void setTextField(TextField tf) {
-        toRead = tf;
         toRead.addEventHandler(KeyEvent.KEY_TYPED, event -> {
             char c = event.getCharacter().charAt(0);
             if(c == ' ') {
@@ -23,6 +19,8 @@ public class ReadNum extends Tile {
             }
         });
     }
+
+
 
     @Override
     boolean getModifier(Ball b) {
@@ -62,7 +60,6 @@ public class ReadNum extends Tile {
     @Override
     public Tile clone(int sizeTile) {
         ReadNum r = new ReadNum(thisDirection, sizeTile);
-        r.setTextField(toRead);
         return r;
     }
 

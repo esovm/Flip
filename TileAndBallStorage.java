@@ -25,7 +25,7 @@ class TileAndBallStorage {
         isSuspended = false;
     }
 
-    void read(File f) {
+    void read(File f, Flip flip) {
         swap();
         try {
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
@@ -42,7 +42,11 @@ class TileAndBallStorage {
                         }
                         if (c != '\r') {
                             if (c != '\n') {
-                                al.add(Tile.create((char) c, tileSize));
+                                Tile t = Tile.create((char) c, tileSize);
+                                if(t instanceof ControlTerm) {
+                                    ((ControlTerm) t).setFlip(flip);
+                                }
+                                al.add(t);
                             } else {
                                 tiles.add(al);
                                 break;
@@ -61,8 +65,8 @@ class TileAndBallStorage {
                     int x = sc.nextInt();
                     int y = sc.nextInt();
                     int number = sc.nextInt();
-                    sc.useDelimiter("}");
                     sc.skip(",");
+                    sc.useDelimiter("}");
                     String s = sc.next();
                     Direction d = Direction.getString(s);
                     balls.add(new Ball(d, x, y, tileSize, number));

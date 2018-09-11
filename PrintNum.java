@@ -1,14 +1,10 @@
 import javafx.scene.control.TextArea;
 
 public class PrintNum extends Tile {
-    private TextArea toPrint;
+    private TextArea toPrint = Flip.output;
 
     PrintNum(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
-    }
-
-    void setTextArea(TextArea tf) {
-        toPrint = tf;
     }
 
     @Override
@@ -29,9 +25,7 @@ public class PrintNum extends Tile {
 
     @Override
     public Tile clone(int sizeTile) {
-        PrintNum p = new PrintNum(thisDirection, sizeTile);
-        p.setTextArea(toPrint);
-        return p;
+        return new PrintNum(thisDirection, sizeTile);
     }
 
     @Override

@@ -1,14 +1,10 @@
 import javafx.scene.control.TextArea;
 
 public class PrintAscii extends Tile {
-    private TextArea toPrint;
+    private TextArea toPrint = Flip.output;
 
     PrintAscii(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
-    }
-
-    void setTextArea(TextArea tf) {
-        toPrint = tf;
     }
 
     @Override
@@ -19,7 +15,9 @@ public class PrintAscii extends Tile {
     @Override
     void update(Ball b, TileAndBallStorage tb) {
         tb.removeExactBall(b);
-        toPrint.appendText(Character.toString((char) Math.abs(b.number)));
+        String s = Character.toString((char) Math.abs(b.number));
+        toPrint.appendText(s);
+        System.out.print(s);
     }
 
     @Override
@@ -29,9 +27,7 @@ public class PrintAscii extends Tile {
 
     @Override
     public Tile clone(int sizeTile) {
-        PrintAscii p = new PrintAscii(thisDirection, sizeTile);
-        p.setTextArea(toPrint);
-        return p;
+        return new PrintAscii(thisDirection, sizeTile);
     }
 
     @Override

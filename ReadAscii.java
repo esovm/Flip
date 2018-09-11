@@ -2,20 +2,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-import java.util.Scanner;
-
 public class ReadAscii extends Tile {
-    private TextField toRead;
+    private TextField toRead = Flip.input;
     private Ball ball;
     private TileAndBallStorage tileBall;
 
 
     ReadAscii(Direction whichDirection, int sizeTile) {
         super(whichDirection, sizeTile);
-    }
-
-    void setTextField(TextField tf) {
-        toRead = tf;
         toRead.addEventHandler(KeyEvent.KEY_TYPED, event -> {
             handle();
         });
@@ -58,9 +52,7 @@ public class ReadAscii extends Tile {
 
     @Override
     public Tile clone(int sizeTile) {
-        ReadAscii r = new ReadAscii(thisDirection, sizeTile);
-        r.setTextField(toRead);
-        return r;
+        return new ReadAscii(thisDirection, sizeTile);
     }
 
     @Override
