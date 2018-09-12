@@ -1,7 +1,7 @@
 import java.awt.*;
 
 enum Direction {
-    NORTH(-1,0), SOUTH(1,0), WEST(0,-1), EAST(0,1), NORTHSOUTH(0,0), EASTWEST(0,0), NORTHSOUTHEASTWEST(0,0);
+    NORTH(0,-1), SOUTH(0,1), EAST(1,0), WEST(-1,0), NORTHSOUTH(0,0), EASTWEST(0,0), NORTHSOUTHEASTWEST(0,0);
 
     Point pos;
     Direction(int x, int y) {

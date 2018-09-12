@@ -15,9 +15,9 @@ public class PrintAscii extends Tile {
     @Override
     void update(Ball b, TileAndBallStorage tb) {
         tb.removeExactBall(b);
-        String s = Character.toString((char) Math.abs(b.number));
-        toPrint.appendText(s);
-        System.out.print(s);
+        char c = (char) Math.abs(b.number);
+        toPrint.setText(toPrint.getText() + c);
+        System.out.print(c);
     }
 
     @Override
