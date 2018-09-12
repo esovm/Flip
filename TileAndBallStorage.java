@@ -175,8 +175,7 @@ class TileAndBallStorage {
 
     synchronized void update() {
         if(!isSuspended) {
-            ArrayList<Ball> ballsTemp = new ArrayList<>();
-            ballsTemp.addAll(balls);
+            ArrayList<Ball> ballsTemp = new ArrayList<>(balls);
             for (Ball ball : ballsTemp) {
                 ball.update(this);
             }
