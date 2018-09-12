@@ -37,8 +37,16 @@ class TileAndBallStorage {
                     while (true) {
                         int c = br.read();
                         if (c == '\t') {
+                            tiles.add(al);
                             toBreak = true;
                             break;
+                        }
+                        if (c == -1) {
+                            tiles.add(al);
+                            swap();
+                            removeEmpty();
+                            balls.add(new Ball(Direction.EAST, -1, 0, tileSize, 0));
+                            return;
                         }
                         if (c != '\r') {
                             if (c != '\n') {
@@ -76,7 +84,7 @@ class TileAndBallStorage {
                 sc.close();
             }
         } catch (IOException e) {
-            System.err.println("Warning: Could not read from file.");
+            Flip.output.appendText("Warning: Could not read from file.");
             e.printStackTrace();
         }
         swap();
@@ -112,15 +120,17 @@ class TileAndBallStorage {
                 }
                 bw.newLine();
             }
-            bw.write('\t');
-            bw.write("Balls:[");
-            for (Ball b : balls) {
-                bw.write("{" + b.x + "," + b.y + "," + b.number + "," + b.thisDirection.toString() + "}");
+            if(balls.size() > 0) {
+                bw.write('\t');
+                bw.write("Balls:[");
+                for (Ball b : balls) {
+                    bw.write("{" + b.x + "," + b.y + "," + b.number + "," + b.thisDirection.toString() + "}");
+                }
+                bw.write("]");
             }
-            bw.write("]");
             bw.close();
         } catch (IOException e) {
-            System.err.println("Warning: Could not write to file.");
+            Flip.output.appendText("Warning: Could not write to file.");
             e.printStackTrace();
         }
         swap();
@@ -226,7 +236,7 @@ class TileAndBallStorage {
         removeTile(x, y);
     }
 
-    void removeBall(int x, int y) {
+    private void removeBall(int x, int y) {
         balls.removeIf(ball -> ball.x == x && ball.y == y);
     }
 

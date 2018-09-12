@@ -11,8 +11,8 @@ public class Sluce extends Tile {
     @Override
     void update(Ball b, TileAndBallStorage tb) {
         if(b.thisDirection == Direction.flip(thisDirection)) {
-            boolean left = getModifierToLeft(b, tb, thisDirection);
-            boolean right = getModifierToRight(b, tb, thisDirection);
+            boolean left = getModifierToLeft(b, tb, b.thisDirection);
+            boolean right = getModifierToRight(b, tb, b.thisDirection);
             if (left ^ right) {
                 if (left) {
                     b.thisDirection = Direction.rotateLeft(b.thisDirection);

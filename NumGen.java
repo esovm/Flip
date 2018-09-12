@@ -9,7 +9,7 @@ public class NumGen extends Tile {
 
     @Override
     boolean getModifier(Ball b) {
-        return b.number == number;
+        return b.number == 0 && number == 0;
     }
 
     @Override

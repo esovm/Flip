@@ -20,7 +20,7 @@ class Comment extends Tile {
 
     @Override
     void update(Ball b, TileAndBallStorage tb) {
-        System.err.println("Warning: The ball should not reach comments.");
+        Flip.output.appendText("Warning: The ball should not reach comments.");
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.List;
 
 public class Flip extends Application {
-    private static final String whichFont = "Monospace.ttf";
+    private static String whichFont = "Monospace.ttf";
     private static int width = 1800;
     private static int height = 900;
     private static int canvasX = 200;
@@ -106,6 +106,7 @@ public class Flip extends Application {
             f = fc.showOpenDialog(primaryStage);
             if (f != null) {
                 tb.read(f, this);
+                output.clear();
                 draw();
             }
         });
@@ -254,6 +255,12 @@ public class Flip extends Application {
                     }
                     if (f != null) {
                         tb.write(f);
+                    }
+                } else if (event.getCode() == KeyCode.Z) {
+                    if (f != null) {
+                        tb.read(f, this);
+                        output.clear();
+                        draw();
                     }
                 } else if (event.getCode() == KeyCode.UP) {
                     if(shiftY >= tileSize/2) {
