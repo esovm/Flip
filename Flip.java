@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -21,7 +22,8 @@ import java.io.File;
 import java.util.List;
 
 public class Flip extends Application {
-    private static String whichFont = "Monospace.ttf";
+    private static String whichFont = "Space_Mono.ttf";
+    private static int fontSize = 12;
     private static int width = 1800;
     private static int height = 900;
     private static int canvasX = 200;
@@ -48,6 +50,8 @@ public class Flip extends Application {
             canvasX = Integer.parseInt(args[2]);
             canvasY = Integer.parseInt(args[3]);
             tileSize = Integer.parseInt(args[4]);
+            whichFont = args[5];
+            fontSize = Integer.parseInt(args[6]);
             System.out.println("Running custom options:");
         } catch (NumberFormatException e) {
             System.err.println("The arguments are:");
@@ -56,6 +60,8 @@ public class Flip extends Application {
             System.err.println("\t X: The x location of the canvas. The default is 200.");
             System.err.println("\t Y: The y location of the canvas.The default is 100.");
             System.err.println("\t Size: Size of each tile. The default is 20. WARNING: changing this value may have unintended effects on the sharpness of the tiles.");
+            System.err.println("\t Font: The font for the output. The default is space mono.");
+            System.err.println("\t Size: Size of the font.");
             System.err.println("All units are in pixels, and must be integers.");
             System.exit(1);
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -66,6 +72,8 @@ public class Flip extends Application {
         System.out.println("\t X = " + canvasX + ".");
         System.out.println("\t Y = " + canvasY + ".");
         System.out.println("\t Size = " + tileSize + ".");
+        System.out.println("\t Font = " + whichFont + ".");
+        System.out.println("\t Font Size = " + fontSize + ".");
         launch(args);
     }
 
@@ -110,6 +118,7 @@ public class Flip extends Application {
                 draw();
             }
         });
+        load.setPadding(Insets.EMPTY);
         children.add(load);
 
         Button saveAs = new Button("", new ImageView(findImage("Save.png")));
@@ -122,6 +131,7 @@ public class Flip extends Application {
                 tb.write(f);
             }
         });
+        saveAs.setPadding(Insets.EMPTY);
         children.add(saveAs);
 
         Button run = new Button("", new ImageView(findImage("Run.png")));
@@ -132,6 +142,7 @@ public class Flip extends Application {
                 new Thread(runClient = new TimedRunClient(this, Integer.parseInt(howFast.getText()))).start();
             }
         });
+        run.setPadding(Insets.EMPTY);
         children.add(run);
 
         Button stop = new Button("", new ImageView(findImage("Stop.png")));
@@ -139,12 +150,14 @@ public class Flip extends Application {
         stop.setPrefHeight(unitY * 2);
         stop.relocate(unitX * 2, 0);
         stop.setOnAction(event -> stopRunning());
+        stop.setPadding(Insets.EMPTY);
         children.add(stop);
 
         ToggleButton selectMode = new ToggleButton("", new ImageView(findImage("Select.png")));
         selectMode.setPrefWidth(unitX * 2);
         selectMode.setPrefHeight(unitY * 2);
         selectMode.relocate(unitX * 10, 0);
+        selectMode.setPadding(Insets.EMPTY);
         children.add(selectMode);
 
         ToggleGroup horVer = new ToggleGroup();
@@ -154,6 +167,7 @@ public class Flip extends Application {
         deleteHorizontal.setPrefHeight(unitY);
         deleteHorizontal.relocate(unitX * 12, 0);
         deleteHorizontal.setToggleGroup(horVer);
+        deleteHorizontal.setPadding(Insets.EMPTY);
         children.add(deleteHorizontal);
 
         ToggleButton deleteVertical = new ToggleButton("", new ImageView(findImage("SelectVer.png")));
@@ -161,6 +175,7 @@ public class Flip extends Application {
         deleteVertical.setPrefHeight(unitY);
         deleteVertical.relocate(unitX * 12, unitY);
         deleteVertical.setToggleGroup(horVer);
+        deleteVertical.setPadding(Insets.EMPTY);
         children.add(deleteVertical);
 
         howFast = new TextField();
@@ -168,6 +183,7 @@ public class Flip extends Application {
         howFast.setPrefWidth(unitX * 2);
         howFast.setPrefHeight(unitY * 2);
         howFast.relocate(unitX * 4, 0);
+        howFast.setPadding(Insets.EMPTY);
         children.add(howFast);
 
         input = new TextField();
@@ -175,6 +191,7 @@ public class Flip extends Application {
         input.setPrefWidth(unitX * 2);
         input.setPrefHeight(unitY*2);
         input.relocate(unitX * 14, 0);
+        input.setPadding(Insets.EMPTY);
         children.add(input);
 
         output = new TextArea();
@@ -183,7 +200,8 @@ public class Flip extends Application {
         output.setPrefHeight(height-canvasX);
         output.relocate(0, unitY*2);
         output.setWrapText(false);
-        output.setFont(findFont(whichFont, 12));
+        output.setFont(findFont(whichFont, fontSize));
+        output.setPadding(Insets.EMPTY);
         children.add(output);
 
         Button clear = new Button("", new ImageView(findImage("Clear.png")));
@@ -191,6 +209,7 @@ public class Flip extends Application {
         clear.setPrefHeight(unitY * 2);
         clear.relocate(unitX * 16, 0);
         clear.setOnAction(event -> output.setText(""));
+        clear.setPadding(Insets.EMPTY);
         children.add(clear);
 
         canvas = new Canvas(width - canvasX, height - canvasY);
