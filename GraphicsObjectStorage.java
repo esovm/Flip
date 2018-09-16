@@ -84,7 +84,7 @@ class GraphicsObjectStorage {
                 } while (!toBreak);
                 if(toReadBalls) {
                 	Scanner sc = new Scanner(br);
-                	sc.skip("Balls:[{");
+                	sc.skip("Balls:\\[\\{");
                 	do {
                 		sc.useDelimiter(",");
                 		int x = sc.nextInt();
