@@ -1,3 +1,19 @@
+/*
+Copyright 2018 Rouli Freeman
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.BufferedReader;
@@ -10,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 class GraphicsObjectStorage {
-    private final ArrayList<ArrayList<Tile>> tiles;
-    private final ArrayList<Ball> balls;
+    private ArrayList<ArrayList<Tile>> tiles;
+    private ArrayList<Ball> balls;
     private final int tileSize;
     private GraphicsObjectStorage copy = null;
     private boolean isSuspended = false;
@@ -95,14 +111,14 @@ class GraphicsObjectStorage {
 
     private void swap() {
         ArrayList<ArrayList<Tile>> oldTiles = tiles;
-        tiles.clear();
+        tiles = new ArrayList<>();
         for(int a = 0; a < oldTiles.size(); a++) {
             for(int b = 0; b < oldTiles.get(a).size(); b++) {
                 placeTile(oldTiles.get(a).get(b), b, a);
             }
         }
         ArrayList<Ball> oldBalls = balls;
-        balls.clear();
+        balls = new ArrayList<>();
         for (Ball b : oldBalls) {
             int temp = b.x;
             b.x = b.y;
