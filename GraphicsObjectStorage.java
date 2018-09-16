@@ -1,17 +1,22 @@
 import javafx.scene.canvas.GraphicsContext;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class TileAndBallStorage {
-    private ArrayList<ArrayList<Tile>> tiles;
-    private ArrayList<Ball> balls;
-    private int tileSize;
-    private TileAndBallStorage copy = null;
+class GraphicsObjectStorage {
+    private final ArrayList<ArrayList<Tile>> tiles;
+    private final ArrayList<Ball> balls;
+    private final int tileSize;
+    private GraphicsObjectStorage copy = null;
     private boolean isSuspended = false;
 
-    TileAndBallStorage(int sizeTile) {
+    GraphicsObjectStorage(int sizeTile) {
         tiles = new ArrayList<>();
         balls = new ArrayList<>();
         tileSize = sizeTile;
@@ -25,13 +30,14 @@ class TileAndBallStorage {
         isSuspended = false;
     }
 
-    void read(File f, Flip flip) {
+    void read(File toRead, Flip flip) {
         swap();
         try {
-            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-                tiles = new ArrayList<>();
-                balls = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(toRead))) {
+                tiles.clear();
+                balls.clear();
                 boolean toBreak = false;
+                boolean toReadBalls = true;
                 do {
                     ArrayList<Tile> al = new ArrayList<>();
                     while (true) {
@@ -40,48 +46,44 @@ class TileAndBallStorage {
                             tiles.add(al);
                             toBreak = true;
                             break;
-                        }
-                        if (c == -1) {
+                        } else if (c == -1) {
                             tiles.add(al);
-                            swap();
-                            removeEmpty();
-                            balls.add(new Ball(Direction.EAST, -1, 0, tileSize, 0));
-                            return;
-                        }
-                        if (c != '\r') {
-                            if (c != '\n') {
-                                Tile t = Tile.create((char) c, tileSize);
-                                if(t instanceof ControlTerm) {
-                                    ((ControlTerm) t).setFlip(flip);
-                                }
-                                al.add(t);
-                            } else {
-                                tiles.add(al);
-                                break;
+                            balls.add(new Ball(Direction.EAST, 0, -1, 0));
+                            toReadBalls = false;
+                            toBreak = true;
+                            break;
+                        } else if (c == '\r') {
+                            //Do nothing
+                        } else if (c == '\n') {
+                            tiles.add(al);
+                            break;
+                        } else {
+                            Tile t = Tile.create((char) c, tileSize);
+                            if(t instanceof ControlTerm) {
+                                ((ControlTerm) t).setFlip(flip);
                             }
+                            al.add(t);
                         }
                     }
                 } while (!toBreak);
-                while (true) {
-                    if (br.read() == '{') {
-                        break;
-                    }
+                if(toReadBalls) {
+                	Scanner sc = new Scanner(br);
+                	sc.skip("Balls:[{");
+                	do {
+                		sc.useDelimiter(",");
+                		int x = sc.nextInt();
+                		int y = sc.nextInt();
+                		int number = sc.nextInt();
+                		sc.skip(",");
+                		sc.useDelimiter("}");
+                		String s = sc.next();
+                		Direction d = Direction.getString(s);
+                		balls.add(new Ball(d, x, y, number));
+                		sc.skip("}");
+                		sc.skip("(])|(\\{)");
+                	} while (sc.hasNext());
+                	sc.close();
                 }
-                Scanner sc = new Scanner(br);
-                do {
-                    sc.useDelimiter(",");
-                    int x = sc.nextInt();
-                    int y = sc.nextInt();
-                    int number = sc.nextInt();
-                    sc.skip(",");
-                    sc.useDelimiter("}");
-                    String s = sc.next();
-                    Direction d = Direction.getString(s);
-                    balls.add(new Ball(d, x, y, tileSize, number));
-                    sc.skip("}");
-                    sc.skip("(])|(\\{)");
-                } while (sc.hasNext());
-                sc.close();
             }
         } catch (IOException e) {
             Flip.output.appendText("Warning: Could not read from file.");
@@ -93,14 +95,14 @@ class TileAndBallStorage {
 
     private void swap() {
         ArrayList<ArrayList<Tile>> oldTiles = tiles;
-        tiles = new ArrayList<>();
+        tiles.clear();
         for(int a = 0; a < oldTiles.size(); a++) {
             for(int b = 0; b < oldTiles.get(a).size(); b++) {
                 placeTile(oldTiles.get(a).get(b), b, a);
             }
         }
         ArrayList<Ball> oldBalls = balls;
-        balls = new ArrayList<>();
+        balls.clear();
         for (Ball b : oldBalls) {
             int temp = b.x;
             b.x = b.y;
@@ -109,11 +111,11 @@ class TileAndBallStorage {
         }
     }
 
-    void write(File f) {
+    void write(File toWrite) {
         swap();
         removeEmpty();
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(toWrite));
             for (ArrayList<Tile> tile : tiles) {
                 for (Tile aTile : tile) {
                     bw.write(aTile.getAscii());
@@ -159,17 +161,17 @@ class TileAndBallStorage {
                 return tiles.get(x).get(y);
             }
         }
-        return new Empty(Direction.NORTHSOUTHEASTWEST, tileSize);
+        return new Empty(Direction.NORTHSOUTHEASTWEST);
     }
 
-    void draw(GraphicsContext gc) {
+    synchronized void draw(GraphicsContext gc) {
         for (int a = 0; a < tiles.size(); a++) {
             for (int b = 0; b < tiles.get(a).size(); b++) {
-                tiles.get(a).get(b).draw(gc, a, b);
+                tiles.get(a).get(b).draw(gc, a, b, tileSize);
             }
         }
         for (Ball ball : balls) {
-            ball.draw(gc);
+            ball.draw(gc, tileSize);
         }
     }
 
@@ -192,7 +194,7 @@ class TileAndBallStorage {
         balls.remove(toRemove);
     }
 
-    void place(GraphicsObject go, int x, int y) {
+    synchronized void place(GraphicsObject go, int x, int y) {
         if (go instanceof Empty) {
             remove(x, y);
         } else {
@@ -218,7 +220,7 @@ class TileAndBallStorage {
                 tiles.get(x).set(y, t);
             } else {
                 for (int i = 0; i < y - tiles.get(x).size() + 1; i++) {
-                    tiles.get(x).add(new Empty(Direction.NORTHSOUTHEASTWEST, tileSize));
+                    tiles.get(x).add(new Empty(Direction.NORTHSOUTHEASTWEST));
                 }
                 placeTile(t, x, y);
             }
@@ -242,7 +244,7 @@ class TileAndBallStorage {
     private void removeTile(int x, int y) {
         if (x < tiles.size()) {
             if (y < tiles.get(x).size()) {
-                tiles.get(x).set(y, new Empty(Direction.NORTHSOUTHEASTWEST, tileSize));
+                tiles.get(x).set(y, new Empty(Direction.NORTHSOUTHEASTWEST));
             }
         }
     }
@@ -282,12 +284,12 @@ class TileAndBallStorage {
     }
 
     void copyRect(int startX, int startY, int endX, int endY) {
-        copy = new TileAndBallStorage(tileSize);
+        copy = new GraphicsObjectStorage(tileSize);
         for (int a = startX; a < endX; a++) {
             for (int b = startY; b < endY; b++) {
                 if (a < tiles.size()) {
                     if (b < tiles.get(a).size()) {
-                        copy.placeTile(tiles.get(a).get(b).clone(tileSize), a - startX, b - startY);
+                        copy.placeTile(tiles.get(a).get(b).clone(), a - startX, b - startY);
                     }
                 }
             }
@@ -296,7 +298,7 @@ class TileAndBallStorage {
             Ball b = balls.get(i);
             if (b.x >= startX && b.x < endX) {
                 if (b.y >= startY && b.y < endY) {
-                    Ball ball = b.clone(tileSize);
+                    Ball ball = b.clone();
                     ball.x -= startX;
                     ball.y -= startY;
                     copy.balls.add(ball);
@@ -308,11 +310,11 @@ class TileAndBallStorage {
     void pasteRect(int startX, int startY) {
         for (int a = 0; a < copy.tiles.size(); a++) {
             for (int b = 0; b < copy.tiles.get(a).size(); b++) {
-                placeTile(copy.tiles.get(a).get(b).clone(tileSize), startX + a, startY + b);
+                placeTile(copy.tiles.get(a).get(b).clone(), startX + a, startY + b);
             }
         }
         for (int i = 0; i < copy.balls.size(); i++) {
-            Ball b = copy.balls.get(i).clone(tileSize);
+            Ball b = copy.balls.get(i).clone();
             b.x += startX;
             b.y += startY;
             balls.add(b);

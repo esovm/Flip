@@ -5,8 +5,8 @@ class Ball extends GraphicsObject {
     int x;
     int y;
 
-    public Ball clone(int sizeTile) {
-        return new Ball(thisDirection, x, y, sizeTile, number);
+    public Ball clone() {
+        return new Ball(thisDirection, x, y, number);
     }
 
     @Override
@@ -26,11 +26,11 @@ class Ball extends GraphicsObject {
         return ' ';
     }
 
-    void draw(GraphicsContext gc) {
+    void draw(GraphicsContext gc, int tileSize) {
         gc.drawImage(findImage(), x * tileSize, y * tileSize, tileSize, tileSize);
     }
 
-    void update(TileAndBallStorage tb) {
+    void update(GraphicsObjectStorage tb) {
         if (thisDirection == Direction.NORTH) {
             y--;
         }
@@ -64,8 +64,8 @@ class Ball extends GraphicsObject {
         throw new Error("Warning: This ball is not facing north or south or east or west");
     }
 
-    Ball(Direction whichDirection, int posX, int posY, int sizeTile, int thisNumber) {
-        super(whichDirection, sizeTile);
+    Ball(Direction whichDirection, int posX, int posY, int thisNumber) {
+        super(whichDirection);
         x = posX;
         y = posY;
         number = thisNumber;

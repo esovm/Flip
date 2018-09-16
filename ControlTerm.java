@@ -3,8 +3,8 @@ public class ControlTerm extends Tile {
     TextArea ta = Flip.output;
     Flip f;
 
-    ControlTerm(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    ControlTerm(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class ControlTerm extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         tb.removeExactBall(b);
         ta.appendText("\nProcess finished with exit code " + b.number);
         f.stopRunning();
@@ -29,8 +29,8 @@ public class ControlTerm extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        ControlTerm q = new ControlTerm(thisDirection, sizeTile);
+    public Tile clone() {
+        ControlTerm q = new ControlTerm(thisDirection);
         q.setFlip(f);
         return q;
     }

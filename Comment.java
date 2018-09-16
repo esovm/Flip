@@ -3,8 +3,8 @@ import javafx.scene.canvas.GraphicsContext;
 class Comment extends Tile {
     private char c;
 
-    Comment(Direction whichDirection, int sizeTile, char whichCharacter) {
-        super(whichDirection, sizeTile);
+    Comment(Direction whichDirection, char whichCharacter) {
+        super(whichDirection);
         c = whichCharacter;
     }
 
@@ -19,13 +19,13 @@ class Comment extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         Flip.output.appendText("Warning: The ball should not reach comments.");
     }
 
     @Override
-    public Comment clone(int sizeTile) {
-        return new Comment(thisDirection, sizeTile, getAscii());
+    public Comment clone() {
+        return new Comment(thisDirection, getAscii());
     }
 
     @Override
@@ -34,7 +34,7 @@ class Comment extends Tile {
     }
 
     @Override
-    void draw(GraphicsContext gc, int x, int y) {
+    void draw(GraphicsContext gc, int x, int y, int tileSize) {
         gc.strokeText("" + c, x * tileSize + tileSize / 2, y * tileSize + tileSize / 2);
     }
 }

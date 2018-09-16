@@ -26,9 +26,9 @@ class SelectOverlay {
         Point e = arrangeEnd();
         if (e.x - s.x == 1 && e.y - s.y == 1) {
             if (go instanceof Empty) {
-                flip.tb.remove(s.x, s.y);
+                flip.storage.remove(s.x, s.y);
             } else {
-                flip.tb.place(go.clone(tileSize), s.x, s.y);
+                flip.storage.place(go.clone(), s.x, s.y);
             }
             start = new Point(start.x + 1, start.y);
             end = new Point(end.x + 1, end.y);
@@ -37,7 +37,7 @@ class SelectOverlay {
         } else {
             for (int a = s.x; a < e.x; a++) {
                 for (int b = s.y; b < e.y; b++) {
-                    flip.tb.place(go.clone(tileSize), a, b);
+                    flip.storage.place(go.clone(), a, b);
                 }
             }
         }
@@ -52,14 +52,14 @@ class SelectOverlay {
 
     void paste() {
         Point s = arrangeStart();
-        flip.tb.pasteRect(s.x, s.y);
+        flip.storage.pasteRect(s.x, s.y);
         flip.draw();
     }
 
     void copy() {
         Point s = arrangeStart();
         Point e = arrangeEnd();
-        flip.tb.copyRect(s.x, s.y, e.x, e.y);
+        flip.storage.copyRect(s.x, s.y, e.x, e.y);
         flip.draw();
     }
 
@@ -75,13 +75,13 @@ class SelectOverlay {
     private void erase() {
         Point s = arrangeStart();
         Point e = arrangeEnd();
-        flip.tb.removeRect(s.x, s.y, e.x, e.y);
+        flip.storage.removeRect(s.x, s.y, e.x, e.y);
     }
 
     void delete() {
         Point s = arrangeStart();
         Point e = arrangeEnd();
-        flip.tb.deleteRect(s.x, s.y, e.x, e.y);
+        flip.storage.deleteRect(s.x, s.y, e.x, e.y);
         flip.draw();
     }
 

@@ -1,6 +1,6 @@
 public class UnaryIncrement extends Tile {
-    UnaryIncrement(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    UnaryIncrement(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -9,7 +9,7 @@ public class UnaryIncrement extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         b.number++;
     }
 
@@ -19,8 +19,8 @@ public class UnaryIncrement extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new UnaryIncrement(thisDirection, sizeTile);
+    public Tile clone() {
+        return new UnaryIncrement(thisDirection);
     }
 
     @Override

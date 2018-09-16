@@ -2,36 +2,36 @@ import java.awt.*;
 
 abstract class Tile extends GraphicsObject{
     static Tile[] subClasses;
-    Tile(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    Tile(Direction whichDirection) {
+        super(whichDirection);
     }
     static void init() {
-        subClasses = new Tile[]{new Empty(Direction.NORTHSOUTHEASTWEST, 0),
-                new Sluce(Direction.NORTH, 0), new Sluce(Direction.SOUTH, 0),
-                new Sluce(Direction.EAST, 0), new Sluce(Direction.WEST, 0),
-                new True(Direction.NORTHSOUTHEASTWEST, 0), new Random(Direction.NORTHSOUTHEASTWEST, 0),
-                new Flipper(Direction.NORTHSOUTH,0), new Flipper(Direction.EASTWEST,0),
-                new Wall(Direction.NORTHSOUTH,0), new Wall(Direction.EASTWEST, 0),
-                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 0), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 1),
-                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 2), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 3),
-                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 4), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 5),
-                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 6), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 7),
-                new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 8), new NumGen(Direction.NORTHSOUTHEASTWEST, 0, 9),
-                new TarpitAdd(Direction.NORTHSOUTHEASTWEST, 0), new TarpitMult(Direction.NORTHSOUTHEASTWEST, 0),
-                new UnaryNegate(Direction.NORTHSOUTHEASTWEST, 0), new UnaryReset(Direction.NORTHSOUTHEASTWEST, 0),
-                new UnaryDecrement(Direction.NORTHSOUTHEASTWEST, 0), new UnaryIncrement(Direction.NORTHSOUTHEASTWEST, 0),
-                new PrintNum(Direction.NORTHSOUTHEASTWEST, 0), new PrintAscii(Direction.NORTHSOUTHEASTWEST, 0),
-                new ReadNum(Direction.NORTHSOUTHEASTWEST, 0), new ReadAscii(Direction.NORTHSOUTHEASTWEST,0),
-                new ControlTerm(Direction.NORTHSOUTHEASTWEST, 0), new CtrlGrille(Direction.NORTHSOUTHEASTWEST, 0),
-                new Processor(Direction.NORTHSOUTHEASTWEST, 0)};
+        subClasses = new Tile[]{new Empty(Direction.NORTHSOUTHEASTWEST),
+                new Sluce(Direction.NORTH), new Sluce(Direction.SOUTH),
+                new Sluce(Direction.EAST), new Sluce(Direction.WEST),
+                new True(Direction.NORTHSOUTHEASTWEST), new Random(Direction.NORTHSOUTHEASTWEST),
+                new Flipper(Direction.NORTHSOUTH), new Flipper(Direction.EASTWEST),
+                new Wall(Direction.NORTHSOUTH), new Wall(Direction.EASTWEST),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 0), new NumGen(Direction.NORTHSOUTHEASTWEST, 1),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 2), new NumGen(Direction.NORTHSOUTHEASTWEST, 3),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 4), new NumGen(Direction.NORTHSOUTHEASTWEST, 5),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 6), new NumGen(Direction.NORTHSOUTHEASTWEST, 7),
+                new NumGen(Direction.NORTHSOUTHEASTWEST, 8), new NumGen(Direction.NORTHSOUTHEASTWEST, 9),
+                new TarpitAdd(Direction.NORTHSOUTHEASTWEST), new TarpitMult(Direction.NORTHSOUTHEASTWEST),
+                new UnaryNegate(Direction.NORTHSOUTHEASTWEST), new UnaryReset(Direction.NORTHSOUTHEASTWEST),
+                new UnaryDecrement(Direction.NORTHSOUTHEASTWEST), new UnaryIncrement(Direction.NORTHSOUTHEASTWEST),
+                new PrintNum(Direction.NORTHSOUTHEASTWEST), new PrintAscii(Direction.NORTHSOUTHEASTWEST),
+                new ReadNum(Direction.NORTHSOUTHEASTWEST), new ReadAscii(Direction.NORTHSOUTHEASTWEST),
+                new ControlTerm(Direction.NORTHSOUTHEASTWEST), new CtrlGrille(Direction.NORTHSOUTHEASTWEST),
+                new Processor(Direction.NORTHSOUTHEASTWEST)};
     }
     abstract boolean getModifier(Ball b);
 
-    abstract void update(Ball b, TileAndBallStorage tb);
+    abstract void update(Ball b, GraphicsObjectStorage tb);
 
-    public abstract Tile clone(int sizeTile);
+    public abstract Tile clone();
 
-    static boolean getModifierToRight(Ball b, TileAndBallStorage tb, Direction d) {
+    static boolean getModifierToRight(Ball b, GraphicsObjectStorage tb, Direction d) {
         Direction dR1 = Direction.rotateRight(d);
         Direction dR2 = Direction.rotateRight(dR1);
         Point currentPoint = Direction.add(d.pos,dR1.pos);
@@ -41,7 +41,7 @@ abstract class Tile extends GraphicsObject{
         return first ^ second;
     }
 
-    static boolean getModifierToLeft(Ball b, TileAndBallStorage tb, Direction d) {
+    static boolean getModifierToLeft(Ball b, GraphicsObjectStorage tb, Direction d) {
         Direction dR1 = Direction.rotateLeft(d);
         Direction dR2 = Direction.rotateLeft(dR1);
         Point currentPoint = Direction.add(d.pos,dR1.pos);
@@ -54,9 +54,9 @@ abstract class Tile extends GraphicsObject{
     static Tile create(char ascii, int sizeTile) {
         for (Tile sc : subClasses) {
             if (sc.getAscii() == ascii) {
-                return sc.clone(sizeTile);
+                return sc.clone();
             }
         }
-        return new Comment(Direction.NORTHSOUTHEASTWEST,sizeTile,ascii);
+        return new Comment(Direction.NORTHSOUTHEASTWEST,ascii);
     }
 }

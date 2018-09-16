@@ -5,24 +5,20 @@ class Empty extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
     }
 
     @Override
-    public Empty clone(int sizeTile) {
-        return new Empty(thisDirection,sizeTile);
+    public Empty clone() {
+        return new Empty(thisDirection);
     }
 
     @Override
     String getName() {
         return "Empty.png";
     }
-
-    static Direction[] getAllowedDirections() {
-        return new Direction[]{Direction.NORTHSOUTHEASTWEST};
-    }
-    Empty(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    Empty(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override

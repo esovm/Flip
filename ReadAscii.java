@@ -5,11 +5,11 @@ import javafx.scene.input.KeyEvent;
 public class ReadAscii extends Tile {
     private TextField toRead = Flip.input;
     private Ball ball;
-    private TileAndBallStorage tileBall;
+    private GraphicsObjectStorage tileBall;
 
 
-    ReadAscii(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    ReadAscii(Direction whichDirection) {
+        super(whichDirection);
         toRead.addEventHandler(KeyEvent.KEY_TYPED, event -> {
             handle();
         });
@@ -21,7 +21,7 @@ public class ReadAscii extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         ball = b;
         tileBall = tb;
         tb.removeExactBall(b);
@@ -43,16 +43,16 @@ public class ReadAscii extends Tile {
     }
 
     @Override
-    void draw(GraphicsContext gc, int x, int y) {
-        super.draw(gc, x, y);
+    void draw(GraphicsContext gc, int x, int y, int tileSize) {
+        super.draw(gc, x, y, tileSize);
         if(ball != null) {
-            ball.draw(gc);
+            ball.draw(gc, tileSize);
         }
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new ReadAscii(thisDirection, sizeTile);
+    public Tile clone() {
+        return new ReadAscii(thisDirection);
     }
 
     @Override

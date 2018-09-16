@@ -1,6 +1,6 @@
 public class True extends Tile {
-    True(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    True(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -9,7 +9,7 @@ public class True extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         b.thisDirection = Direction.flip(b.thisDirection);
     }
 
@@ -19,8 +19,8 @@ public class True extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new True(thisDirection, sizeTile);
+    public Tile clone() {
+        return new True(thisDirection);
     }
 
     @Override

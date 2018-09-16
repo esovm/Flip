@@ -1,6 +1,6 @@
 public class UnaryNegate extends Tile {
-    UnaryNegate(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    UnaryNegate(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -9,7 +9,7 @@ public class UnaryNegate extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         b.number = -b.number;
     }
 
@@ -19,8 +19,8 @@ public class UnaryNegate extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new UnaryNegate(thisDirection, sizeTile);
+    public Tile clone() {
+        return new UnaryNegate(thisDirection);
     }
 
     @Override

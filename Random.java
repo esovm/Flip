@@ -1,7 +1,7 @@
 public class Random extends Tile {
     static boolean random = false;
-    Random(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    Random(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -10,7 +10,7 @@ public class Random extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         Direction[] randomList = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
         b.thisDirection = randomList[(int) Math.floor(Math.random()*randomList.length)];
     }
@@ -21,8 +21,8 @@ public class Random extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new Random(thisDirection, tileSize);
+    public Tile clone() {
+        return new Random(thisDirection);
     }
 
     @Override

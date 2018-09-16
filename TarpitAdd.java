@@ -2,8 +2,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class TarpitAdd extends Tile {
     private Ball ball;
-    TarpitAdd(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    TarpitAdd(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -12,7 +12,7 @@ public class TarpitAdd extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         if(ball != null) {
             b.number += ball.number;
             ball = null;
@@ -28,8 +28,8 @@ public class TarpitAdd extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new TarpitAdd(thisDirection, sizeTile);
+    public Tile clone() {
+        return new TarpitAdd(thisDirection);
     }
 
     @Override
@@ -38,10 +38,10 @@ public class TarpitAdd extends Tile {
     }
 
     @Override
-    void draw(GraphicsContext gc, int x, int y) {
-        super.draw(gc, x, y);
+    void draw(GraphicsContext gc, int x, int y, int tileSize) {
+        super.draw(gc, x, y, tileSize);
         if(ball != null) {
-            ball.draw(gc);
+            ball.draw(gc, tileSize);
         }
     }
 }

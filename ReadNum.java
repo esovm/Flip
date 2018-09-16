@@ -7,11 +7,11 @@ import java.util.Scanner;
 public class ReadNum extends Tile {
     private TextField toRead = Flip.input;
     private Ball ball;
-    private TileAndBallStorage tileBall;
+    private GraphicsObjectStorage tileBall;
 
 
-    ReadNum(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    ReadNum(Direction whichDirection) {
+        super(whichDirection);
         toRead.addEventHandler(KeyEvent.KEY_TYPED, event -> {
             char c = event.getCharacter().charAt(0);
             if(c == ' ') {
@@ -28,7 +28,7 @@ public class ReadNum extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         ball = b;
         tileBall = tb;
         tb.removeExactBall(b);
@@ -50,16 +50,16 @@ public class ReadNum extends Tile {
     }
 
     @Override
-    void draw(GraphicsContext gc, int x, int y) {
-        super.draw(gc, x, y);
+    void draw(GraphicsContext gc, int x, int y, int tileSize) {
+        super.draw(gc, x, y, tileSize);
         if(ball != null) {
-            ball.draw(gc);
+            ball.draw(gc, tileSize);
         }
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        ReadNum r = new ReadNum(thisDirection, sizeTile);
+    public Tile clone() {
+        ReadNum r = new ReadNum(thisDirection);
         return r;
     }
 
@@ -78,6 +78,7 @@ public class ReadNum extends Tile {
             tileBall.place(ball, ball.x, ball.y);
             ball = null;
             tileBall = null;
+            sc.close();
         }
     }
 }

@@ -1,8 +1,8 @@
 import java.awt.*;
 
 public class Flipper extends Tile {
-    Flipper(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    Flipper(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -11,7 +11,7 @@ public class Flipper extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         if(thisDirection == Direction.NORTHSOUTH) {
             if(b.thisDirection == Direction.NORTH || b.thisDirection == Direction.SOUTH) {
                 b.thisDirection = Direction.rotateLeft(b.thisDirection);
@@ -34,7 +34,7 @@ public class Flipper extends Tile {
             whichDirection = new Point(1,-1);
         }
         if(tb.getTileAtPos(whichDirection.x + b.x, whichDirection.y + b.y).getModifier(b) ^ tb.getTileAtPos(-whichDirection.x + b.x, -whichDirection.y + b.y).getModifier(b)) {
-            tb.place(new Flipper(Direction.flip(thisDirection),tileSize),b.x, b.y);
+            tb.place(new Flipper(Direction.flip(thisDirection)),b.x, b.y);
         }
     }
 
@@ -50,8 +50,8 @@ public class Flipper extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new Flipper(thisDirection, sizeTile);
+    public Tile clone() {
+        return new Flipper(thisDirection);
     }
 
     @Override

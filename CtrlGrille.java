@@ -1,6 +1,6 @@
 public class CtrlGrille extends Tile {
-    CtrlGrille(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    CtrlGrille(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -9,7 +9,7 @@ public class CtrlGrille extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         if(b.number <= 0) {
             tb.removeExactBall(b);
         }
@@ -21,8 +21,8 @@ public class CtrlGrille extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new CtrlGrille(thisDirection, sizeTile);
+    public Tile clone() {
+        return new CtrlGrille(thisDirection);
     }
 
     @Override

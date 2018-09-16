@@ -1,6 +1,6 @@
 public class UnaryReset extends Tile {
-    UnaryReset(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    UnaryReset(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -9,7 +9,7 @@ public class UnaryReset extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         b.number = 0;
     }
 
@@ -19,8 +19,8 @@ public class UnaryReset extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new UnaryReset(thisDirection, sizeTile);
+    public Tile clone() {
+        return new UnaryReset(thisDirection);
     }
 
     @Override

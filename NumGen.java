@@ -2,8 +2,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class NumGen extends Tile {
     int number;
-    NumGen(Direction whichDirection, int sizeTile, int num) {
-        super(whichDirection, sizeTile);
+    NumGen(Direction whichDirection, int num) {
+        super(whichDirection);
         number = num;
     }
 
@@ -13,8 +13,8 @@ public class NumGen extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
-        tb.place(new Ball(b.thisDirection, b.x, b.y, tileSize, number), b.x, b.y);
+    void update(Ball b, GraphicsObjectStorage tb) {
+        tb.place(new Ball(b.thisDirection, b.x, b.y, number), b.x, b.y);
         b.thisDirection = Direction.flip(b.thisDirection);
     }
 
@@ -24,13 +24,13 @@ public class NumGen extends Tile {
     }
 
     @Override
-    void draw(GraphicsContext gc, int x, int y) {
+    void draw(GraphicsContext gc, int x, int y, int tileSize) {
         gc.strokeText("" + number, x * tileSize + tileSize / 2, y * tileSize + tileSize / 2);
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new NumGen(thisDirection, sizeTile, number);
+    public Tile clone() {
+        return new NumGen(thisDirection, number);
     }
 
     @Override

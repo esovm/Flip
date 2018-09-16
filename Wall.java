@@ -1,6 +1,6 @@
 public class Wall extends Tile {
-    Wall(Direction whichDirection, int sizeTile) {
-        super(whichDirection, sizeTile);
+    Wall(Direction whichDirection) {
+        super(whichDirection);
     }
 
     @Override
@@ -13,7 +13,7 @@ public class Wall extends Tile {
     }
 
     @Override
-    void update(Ball b, TileAndBallStorage tb) {
+    void update(Ball b, GraphicsObjectStorage tb) {
         if(
                 ((b.thisDirection == Direction.NORTH || b.thisDirection == Direction.SOUTH)
                 && thisDirection == Direction.NORTHSOUTH)
@@ -38,8 +38,8 @@ public class Wall extends Tile {
     }
 
     @Override
-    public Tile clone(int sizeTile) {
-        return new Wall(thisDirection, sizeTile);
+    public Tile clone() {
+        return new Wall(thisDirection);
     }
 
     @Override
